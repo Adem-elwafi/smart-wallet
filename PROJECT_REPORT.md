@@ -6,7 +6,7 @@ Date: 2026-05-07
 
 ### 1.1 Frontend API and Proxy Alignment
 - Updated Axios base URL to use relative API path (`/api`) for Vite proxy usage.
-- Confirmed Vite dev proxy is configured to forward `/api` to backend `http://localhost:8080`.
+- Confirmed Vite dev proxy is configured to forward `/api` to backend `http://localhost:8081`.
 - This avoids direct browser cross-origin requests in normal dev flow.
 
 Files:
