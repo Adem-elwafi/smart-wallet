@@ -11,9 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,40 +20,36 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final WalletService walletService;
     private final AuthenticationManager authenticationManager;
 
-    public User register(RegisterRequest request) {
-        User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        // On encode le mot de passe avant de l'enregistrer
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+    @Transactional
+    public AuthenticationResponse register(RegisterRequest request) {
+        var user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .roles(request.getRoles())
+                .build();
 
-                Set<String> roles = request.getRoles();
-                if (roles == null || roles.isEmpty()) {
-                        roles = Set.of("user");
-                }
-                user.setRoles(new HashSet<>(roles));
+        var savedUser = userRepository.save(user);
+        walletService.createWalletForUser(savedUser);
 
-        return userRepository.save(user);
+        return AuthenticationResponse.builder()
+                .token(jwtService.generateToken(savedUser))
+                .build();
     }
 
     public AuthenticationResponse authenticate(LoginRequest request) {
-        // Vérifie si les identifiants sont corrects
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
         );
 
-        // Si l'authentification réussit, on génère le token
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .token(jwtService.generateToken(user))
                 .build();
     }
 }
