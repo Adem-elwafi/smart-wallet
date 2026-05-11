@@ -106,6 +106,15 @@
 			<version>${kotlin.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- existing deps -->
+
+		<dependency>
+			<groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-reflect</artifactId>
+			<version>${kotlin.version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

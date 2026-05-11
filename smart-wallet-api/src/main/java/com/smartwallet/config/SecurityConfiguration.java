@@ -34,7 +34,8 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll() // Routes publiques
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**").permitAll() // Routes publiques
                         .anyRequest().authenticated()               // Tout le reste est protégé
                 )
                 .sessionManagement(session -> session

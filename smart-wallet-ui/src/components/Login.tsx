@@ -12,7 +12,7 @@ function Login() {
         setLoading(true)
 
         try {
-            const response = await api.post<AuthResponse>('/auth/login', credentials)
+            const response = await api.post<AuthResponse>('/v1/auth/authenticate', credentials)
             localStorage.setItem('token', response.data.token)
             alert('Connexion réussie !')
         } catch (error) {

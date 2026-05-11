@@ -10,7 +10,7 @@ const api = axios.create({
 // Intercepteur pour ajouter le token automatiquement si présent
 api.interceptors.request.use((config) => {
     const requestUrl = config.url ?? '';
-    const isAuthEndpoint = requestUrl.includes('/auth/login') || requestUrl.includes('/auth/register');
+    const isAuthEndpoint = requestUrl.includes('/v1/auth/authenticate') || requestUrl.includes('/v1/auth/register');
 
     if (isAuthEndpoint) {
         return config;

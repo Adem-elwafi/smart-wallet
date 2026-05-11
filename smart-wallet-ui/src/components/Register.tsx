@@ -25,7 +25,7 @@ function Register() {
         setError(null)
 
         try {
-            await api.post('/auth/register', formData)
+            await api.post('/v1/auth/register', formData)
             navigate('/login')
         } catch (err: unknown) {
             const apiError = err as { response?: { data?: { message?: string } } }

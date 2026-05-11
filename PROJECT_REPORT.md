@@ -1,6 +1,6 @@
-# Smart Wallet - Work Report and Frontend Status
+# Smart Wallet - Work Report and Current State
 
-Date: 2026-05-07
+Date: 2026-05-11
 
 ## 1. Scope of Work Completed
 
@@ -8,38 +8,54 @@ Date: 2026-05-07
 - Updated Axios base URL to use relative API path (`/api`) for Vite proxy usage.
 - Confirmed Vite dev proxy is configured to forward `/api` to backend `http://localhost:8081`.
 - This avoids direct browser cross-origin requests in normal dev flow.
+- Updated frontend auth calls to match the backend auth contract.
 
 Files:
 - `smart-wallet-ui/src/api/axiosConfig.ts`
 - `smart-wallet-ui/vite.config.ts`
+- `smart-wallet-ui/src/components/Login.tsx`
+- `smart-wallet-ui/src/components/Register.tsx`
 
 ### 1.2 Backend CORS + Security Adjustments
 - Enabled CORS handling in Spring Security (`http.cors(...)`).
 - Allowed `OPTIONS` preflight globally in security matchers.
 - Added global CORS configuration for `/api/**` with localhost origin patterns.
 - Removed restrictive controller-level `@CrossOrigin` hardcoded to one port.
+- Allowed both `/api/auth/**` and `/api/v1/auth/**` during the transition so current and stale clients can still reach public auth endpoints.
 
 Files:
 - `smart-wallet-api/src/main/java/com/smartwallet/config/SecurityConfiguration.java`
 - `smart-wallet-api/src/main/java/com/smartwallet/controller/AuthController.java`
+- `smart-wallet-api/src/main/java/com/smartwallet/security/JwtAuthenticationFilter.java`
 
 ### 1.3 JWT/Public Auth Route Hardening (403 Fix)
 - Updated JWT filter to skip `/api/auth/**` endpoints.
 - Added defensive handling for invalid JWT parsing so stale tokens do not break request flow.
 - Updated frontend interceptor to not attach `Authorization` header on:
-  - `/auth/login`
-  - `/auth/register`
+  - `/v1/auth/authenticate`
+  - `/v1/auth/register`
+
+### 1.4 Backend Port Update
+- Moved backend runtime port to `8081`.
+- Updated the Vite dev proxy to point to `http://localhost:8081`.
 
 Files:
-- `smart-wallet-api/src/main/java/com/smartwallet/security/JwtAuthenticationFilter.java`
-- `smart-wallet-ui/src/api/axiosConfig.ts`
+- `smart-wallet-api/src/main/resources/application.properties`
+- `smart-wallet-ui/vite.config.ts`
 
-### 1.4 UX Improvement Requested by User
+### 1.5 UX Improvement Requested by User
 - Changed register success behavior to auto-redirect to login page.
 - Removed "stay on register page" behavior after successful signup.
 
 File:
 - `smart-wallet-ui/src/components/Register.tsx`
+
+### 1.6 Login Entity Fix
+- Added JPA-compatible constructors to `User` so Hibernate can instantiate the entity.
+- Kept Lombok builder support by pairing `@NoArgsConstructor` with `@AllArgsConstructor`.
+
+File:
+- `smart-wallet-api/src/main/java/com/smartwallet/model/User.java`
 
 ---
 
@@ -56,10 +72,10 @@ File:
 
 ### 2.2 Auth Flow Behavior
 - Register:
-  - Sends `POST /api/auth/register` (through proxy in dev).
+  - Sends `POST /api/v1/auth/register` (through proxy in dev).
   - On success, navigates automatically to `/login`.
 - Login:
-  - Sends `POST /api/auth/login`.
+  - Sends `POST /api/v1/auth/authenticate`.
   - Stores returned token in `localStorage` key `token`.
   - Displays success/failure alerts.
 
@@ -102,6 +118,7 @@ Files:
 ### 3.3 Practical Functional Status
 - User confirmed registration flow is working.
 - Redirect-after-register has been implemented as requested.
+- The login `User` entity constructor issue was fixed, which was the cause of the Hibernate instantiation error.
 - Full automated E2E verification from this agent session remains pending due environment/runtime constraints.
 
 ---
@@ -123,11 +140,14 @@ Backend:
 - `smart-wallet-api/src/main/java/com/smartwallet/config/SecurityConfiguration.java`
 - `smart-wallet-api/src/main/java/com/smartwallet/security/JwtAuthenticationFilter.java`
 - `smart-wallet-api/src/main/java/com/smartwallet/controller/AuthController.java`
+- `smart-wallet-api/src/main/java/com/smartwallet/model/User.java`
+- `smart-wallet-api/src/main/resources/application.properties`
 
 Frontend:
 - `smart-wallet-ui/src/api/axiosConfig.ts`
 - `smart-wallet-ui/vite.config.ts`
 - `smart-wallet-ui/src/components/Register.tsx`
+- `smart-wallet-ui/src/components/Login.tsx`
 
 ---
 
