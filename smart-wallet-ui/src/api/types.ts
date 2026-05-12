@@ -4,6 +4,12 @@ export interface AuthResponse {
     email?: string;
 }
 
+export interface WalletResponse {
+    accountNumber: string;
+    balance: number;
+    currency: string;
+}
+
 export interface ApiError {
     message: string;
 }

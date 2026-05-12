@@ -19,7 +19,7 @@ public class WalletService {
     private final WalletRepository walletRepository;
     private static final String PREFIX = "SW-";
     private static final SecureRandom random = new SecureRandom();
-    private final UserRepository userRepository; // Ajouté pour la recherche par email
+    private final UserRepository userRepository;
 
     public Wallet createWalletForUser(User user) {
         Wallet wallet = Wallet.builder()
@@ -45,8 +45,8 @@ public class WalletService {
         return accountNumber;
     }
 
-    public WalletResponse getWalletByUsername(String email) {
-        User user = userRepository.findByEmail(email)
+    public WalletResponse getWalletByUsername(String username) {
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         Wallet wallet = walletRepository.findByUserId(user.getId())

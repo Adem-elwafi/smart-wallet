@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../api/axiosConfig'
 import type { AuthResponse } from '../api/types'
 
 function Login() {
+    const navigate = useNavigate()
     const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [loading, setLoading] = useState(false)
 
@@ -15,6 +16,7 @@ function Login() {
             const response = await api.post<AuthResponse>('/v1/auth/authenticate', credentials)
             localStorage.setItem('token', response.data.token)
             alert('Connexion réussie !')
+            navigate('/dashboard')
         } catch (error) {
             console.error('Erreur de connexion', error)
             alert('Identifiants invalides')
