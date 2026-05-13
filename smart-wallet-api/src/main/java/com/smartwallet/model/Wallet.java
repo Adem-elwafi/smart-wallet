@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "wallets")
@@ -34,4 +35,10 @@ public class Wallet {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "senderWallet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Transaction> sentTransactions;
+
+    @OneToMany(mappedBy = "receiverWallet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Transaction> receivedTransactions;
 }
