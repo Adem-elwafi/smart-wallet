@@ -4,43 +4,57 @@ export interface AuthResponse {
     email?: string;
 }
 
-export interface ApiError {
-    message: string;
+export interface WalletResponse {
+    accountNumber: string;
+    balance: number;
+    currency: string;
 }
 
 export interface Transaction {
-  id: number;
-  amount: number;
-  type: 'CREDIT' | 'DEBIT';
-  status: 'PENDING' | 'SUCCESS' | 'FAILED';
-  category: string | null;
-  description: string;
-  createdAt: string;
-  sourceAccountNumber: string;
-  destinationAccountNumber: string;
+    id: number;
+    amount: number;
+    timestamp: string;
+    type: 'DEBIT' | 'CREDIT';
+    description: string;
+    senderAccountNumber: string;
+    recipientAccountNumber: string;
+}
+
+export interface TransactionResponse {
+    id: number;
+    amount: number;
+    timestamp: string;
+    type: string;
+    description: string;
+    senderAccountNumber: string;
+    recipientAccountNumber: string;
 }
 
 export interface WalletSummary {
-  accountNumber: string;
-  balance: number;
+    accountNumber: string;
+    balance: number;
+    currency: string;
 }
 
 export interface TransferRequest {
-  toAccountNumber: string;
-  amount: number;
-  description?: string;
-  category?: string;
+    recipientAccountNumber: string;
+    amount: number;
+    description?: string;
 }
 
 export interface Profile {
-  username: string;
-  email: string;
-  fullName: string | null;
-  avatarUrl: string | null;
+    username: string;
+    email: string;
+    fullName: string | null;
+    avatarUrl: string | null;
 }
 
 export interface UpdateProfileRequest {
-  email: string;
-  fullName: string;
-  avatarUrl: string;
+    email: string;
+    fullName: string;
+    avatarUrl: string;
+}
+
+export interface ApiError {
+    message: string;
 }
