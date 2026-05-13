@@ -1,9 +1,12 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import type { JSX, ReactNode } from 'react'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import Dashboard from './pages/DashBoard'
+import ProfilePage from './pages/ProfilePage'
+import Layout from './components/Layout'
 
-function RequireAuth({ children }: { children: JSX.Element }) {
+function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   const token = localStorage.getItem('token')
 
   if (!token) {
@@ -13,7 +16,7 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   return children
 }
 
-function RedirectIfAuthenticated({ children }: { children: JSX.Element }) {
+function RedirectIfAuthenticated({ children }: { children: JSX.Element }): JSX.Element {
   const token = localStorage.getItem('token')
 
   if (token) {
@@ -27,7 +30,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Redirect root to dashboard if authenticated, else to login */}
+        <Route
+          path="/"
+          element={
+            localStorage.getItem('token') ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Auth Pages - No Layout */}
         <Route
           path="/login"
           element={
@@ -44,14 +59,30 @@ function App() {
             </RedirectIfAuthenticated>
           }
         />
+
+        {/* Protected Routes - With Layout */}
         <Route
           path="/dashboard"
           element={
             <RequireAuth>
-              <Dashboard />
+              <Layout>
+                <Dashboard />
+              </Layout>
             </RequireAuth>
           }
         />
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <Layout>
+                <ProfilePage />
+              </Layout>
+            </RequireAuth>
+          }
+        />
+
+        {/* Catch all - redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>

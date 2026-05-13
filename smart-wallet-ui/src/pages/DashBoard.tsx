@@ -43,18 +43,21 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  if (loading) return <div className="flex justify-center items-center h-screen">Chargement...</div>;
+  if (loading) return <div className="flex justify-center items-center h-64">Chargement...</div>;
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-2xl font-bold text-gray-800 mb-8">Tableau de Bord</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-slate-900">Tableau de Bord</h1>
+        <p className="mt-1 text-sm text-slate-600">Bienvenue dans votre SmartWallet</p>
+      </div>
 
       {/* Carte de Crédit Stylisée */}
-      <div className="relative w-full max-w-md h-56 bg-linear-to-br from-blue-700 via-blue-900 to-black rounded-2xl p-6 shadow-2xl text-white overflow-hidden transform hover:scale-105 transition-transform duration-300">
+      <div className="relative w-full max-w-md h-56 bg-gradient-to-br from-blue-700 via-blue-900 to-black rounded-2xl p-6 shadow-2xl text-white overflow-hidden transform hover:scale-105 transition-transform duration-300">
         {/* Cercles décoratifs en arrière-plan */}
         <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500 rounded-full opacity-20 blur-2xl"></div>
         
-        <div className="flex justify-between items-start mb-10">
+        <div className="flex justify-between items-start mb-10 relative z-10">
           <div>
             <p className="text-blue-200 text-sm font-medium uppercase tracking-wider">Solde Actuel</p>
             <h2 className="text-3xl font-bold mt-1">
@@ -67,7 +70,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-auto">
+        <div className="mt-auto relative z-10">
           <p className="text-blue-100 text-xs mb-1">Numéro de Compte</p>
           <div className="flex items-center gap-3">
             <span className="font-mono text-lg tracking-widest">
@@ -75,15 +78,15 @@ const Dashboard: React.FC = () => {
             </span>
             <button 
               onClick={() => setShowFullAccount(!showFullAccount)}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors"
+              className="p-1 hover:bg-white/10 rounded-full transition-colors text-xs"
             >
-              {showFullAccount ? 'Hide' : 'Show'}
+              {showFullAccount ? 'Masquer' : 'Afficher'}
             </button>
             <button 
               onClick={copyToClipboard}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors relative"
+              className="p-1 hover:bg-white/10 rounded-full transition-colors text-xs"
             >
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? 'Copié!' : 'Copier'}
             </button>
           </div>
         </div>
