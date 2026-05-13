@@ -39,3 +39,17 @@ export interface TransactionResponse {
 export interface ApiError {
     message: string;
 }
+
+export interface Profile {
+    id: number;
+    username: string;
+    email: string;
+    fullName?: string;
+    avatarUrl?: string;
+}
+
+export interface UpdateProfileRequest {
+    email: string;
+    fullName?: string;
+    avatarUrl?: string;
+}

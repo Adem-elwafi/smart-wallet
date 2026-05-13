@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { initiateTransfer } from '../services/transaction.service'
-import type { TransferRequest, TransactionResponse } from '../api/types'
+import type { TransferRequest } from '../api/types'
 
 interface TransferFormProps {
   onTransferSuccess: () => Promise<void>

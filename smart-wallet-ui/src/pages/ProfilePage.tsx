@@ -40,7 +40,7 @@ function ProfilePage() {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData((previous) => ({ ...previous, [name]: value }))
+    setFormData((previous: UpdateProfileRequest) => ({ ...previous, [name]: value }))
   }
 
   const onSubmit = async (e: React.FormEvent) => {

@@ -1,5 +1,5 @@
 import axiosInstance from '../api/axiosConfig';
-import { TransactionResponse, TransferRequest } from '../api/types';
+import type { TransactionResponse, TransferRequest } from '../api/types';
 
 /**
  * Initiate a transfer between wallets
