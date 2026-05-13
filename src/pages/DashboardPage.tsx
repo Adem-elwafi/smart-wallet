@@ -4,13 +4,14 @@ import axios from 'axios'
 import api from '../api/axiosConfig'
 import TransactionsList from '../components/TransactionsList'
 import TransferForm from '../components/TransferForm'
-import type { Transaction, WalletSummary } from '../api/types'
+import { getMyWallet } from '../services/wallet.service'
+import { getTransactionHistory } from '../services/transaction.service'
+import type { TransactionResponse, WalletResponse } from '../api/types'
 
 function DashboardPage() {
   const navigate = useNavigate()
-  const [wallet, setWallet] = useState<WalletSummary | null>(null)
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [category, setCategory] = useState('')
+  const [wallet, setWallet] = useState<WalletResponse | null>(null)
+  const [transactions, setTransactions] = useState<TransactionResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -18,14 +19,12 @@ function DashboardPage() {
     setLoading(true)
     setError(null)
     try {
-      const [walletRes, txRes] = await Promise.all([
-        api.get<WalletSummary>('/wallet/me'),
-        api.get<Transaction[]>('/transactions/history', {
-          params: category ? { category } : undefined,
-        }),
+      const [walletData, txData] = await Promise.all([
+        getMyWallet(),
+        getTransactionHistory(),
       ])
-      setWallet(walletRes.data)
-      setTransactions(txRes.data)
+      setWallet(walletData)
+      setTransactions(txData)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 401) {
@@ -33,18 +32,18 @@ function DashboardPage() {
           navigate('/login')
           return
         }
-        setError(
-          typeof err.response?.data === 'string'
-            ? err.response.data
-            : 'Impossible de charger les donnees du dashboard.'
-        )
+        const errorMessage = 
+          typeof err.response?.data === 'object' && err.response?.data && 'message' in err.response.data
+            ? (err.response.data as any).message
+            : 'Impossible de charger les données du dashboard.'
+        setError(errorMessage)
       } else {
         setError('Une erreur inattendue est survenue.')
       }
     } finally {
       setLoading(false)
     }
-  }, [category, navigate])
+  }, [navigate])
 
   useEffect(() => {
     void loadData()
@@ -76,22 +75,17 @@ function DashboardPage() {
         <section className="rounded-2xl bg-white p-6 shadow-sm">
           <p className="text-sm uppercase tracking-wide text-slate-500">Solde global</p>
           <p className="mt-2 text-3xl font-black text-slate-900">
-            {(wallet?.balance || 0).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}
+            {(wallet?.balance || 0).toLocaleString('fr-FR', { 
+              minimumFractionDigits: 2, 
+              maximumFractionDigits: 2 
+            })} {wallet?.currency || 'TND'}
           </p>
         </section>
 
         <TransferForm onTransferSuccess={loadData} />
 
         <section className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-xl font-semibold text-slate-900">Activites recentes</h2>
-            <input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="Filtrer par categorie"
-              className="rounded-xl border border-slate-300 px-3 py-2 text-sm outline-none focus:border-sky-500"
-            />
-          </div>
+          <h2 className="text-xl font-semibold text-slate-900">Activités récentes</h2>
 
           {error && (
             <p className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>
