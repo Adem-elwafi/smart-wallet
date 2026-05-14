@@ -47,7 +47,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
 
   if (loading) {
     return (
-      <div className="w-full max-w-2xl mx-auto rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-500 shadow-sm">
+      <div className="w-full max-w-2xl mx-auto rounded-xl border border-border bg-surface-elevated p-5 text-sm text-text-tertiary shadow-sm">
         Chargement de l'historique...
       </div>
     );
@@ -55,7 +55,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
 
   if (error) {
     return (
-      <div className="w-full max-w-2xl mx-auto rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-600 shadow-sm">
+      <div className="w-full max-w-2xl mx-auto rounded-xl border border-error bg-error-light p-5 text-sm text-error shadow-sm">
         {error}
       </div>
     );
@@ -63,15 +63,15 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
 
   if (!transactions || transactions.length === 0) {
     return (
-      <div className="w-full max-w-2xl mx-auto rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-500 shadow-sm">
+      <div className="w-full max-w-2xl mx-auto rounded-xl border border-border bg-surface-elevated p-5 text-sm text-text-tertiary shadow-sm">
         Aucune transaction à afficher.
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <div className="divide-y divide-slate-100">
+    <div className="w-full max-w-2xl mx-auto bg-surface-elevated rounded-xl shadow-sm border border-border overflow-hidden">
+      <div className="divide-y divide-border-light">
         {transactions?.map((tx) => {
           const isCredit = tx.type === 'CREDIT';
           const timestamp = new Date(tx.timestamp);
@@ -84,13 +84,13 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
           return (
             <div
               key={tx.id}
-              className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
+              className="flex items-center justify-between p-4 hover:bg-surface-subtle transition-colors"
             >
               <div
                 className={`p-2 rounded-full mr-4 flex-shrink-0 ${
                   isCredit
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-rose-100 text-rose-700'
+                    ? 'bg-success-light text-success-dark'
+                    : 'bg-error-light text-error'
                 }`}
               >
                 {isCredit ? (
@@ -101,25 +101,25 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-slate-900 truncate">
+                <p className="text-sm font-bold text-text-primary truncate">
                   {isCredit ? 'Reçu de ' : 'Envoyé à '}
                   {isCredit ? tx.senderAccountNumber : tx.recipientAccountNumber}
                 </p>
 
                 {tx.description && (
-                  <p className="text-xs text-slate-600 truncate">
+                  <p className="text-xs text-text-secondary truncate">
                     {tx.description}
                   </p>
                 )}
 
-                <p className="text-xs text-slate-500 italic">
+                <p className="text-xs text-text-tertiary italic">
                   {formattedDate} à {formattedTime}
                 </p>
               </div>
 
               <div
                 className={`text-sm font-black whitespace-nowrap ml-4 ${
-                  isCredit ? 'text-emerald-700' : 'text-rose-700'
+                  isCredit ? 'text-success-dark' : 'text-error'
                 }`}
               >
                 {isCredit ? '+' : '-'}

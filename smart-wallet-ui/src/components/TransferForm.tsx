@@ -61,37 +61,37 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
     }
 
     return (
-        <div className="rounded-3xl border border-white/10 bg-white/95 p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl sm:p-8">
+        <div className="rounded-3xl border border-border-light bg-surface-elevated p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl sm:p-8">
             <div className="mb-8 space-y-2 text-left">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-sky-600">Transfert</p>
-                <h2 className="text-3xl font-semibold tracking-tight text-slate-950">Envoyer de l'argent</h2>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-accent">Transfert</p>
+                <h2 className="text-3xl font-semibold tracking-tight text-text-primary">Envoyer de l'argent</h2>
+                <p className="text-sm leading-6 text-text-secondary">
                     Effectuez un virement sécurisé vers un autre compte SmartWallet.
                 </p>
             </div>
 
             {successMessage && (
-                <div className="mb-4 rounded-2xl bg-green-50 p-4 text-sm text-green-700 border border-green-200">
+                <div className="mb-4 rounded-2xl bg-success-light p-4 text-sm text-success-dark border border-success">
                     {successMessage}
                 </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-slate-700">Numéro de compte du destinataire</span>
+                    <span className="text-sm font-medium text-text-secondary">Numéro de compte du destinataire</span>
                     <input
                         type="text"
                         name="recipientAccountNumber"
                         value={formData.recipientAccountNumber}
                         required
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/15"
+                        className="w-full rounded-2xl border border-border bg-surface-subtle px-4 py-3 text-text-primary outline-none transition placeholder:text-text-tertiary focus:border-accent focus:bg-surface-elevated focus:ring-4 focus:ring-accent/15"
                         placeholder="SW-1234567890"
                         onChange={handleChange}
                     />
                 </label>
 
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-slate-700">Montant (TND)</span>
+                    <span className="text-sm font-medium text-text-secondary">Montant (TND)</span>
                     <input
                         type="number"
                         name="amount"
@@ -99,18 +99,18 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
                         required
                         step="0.01"
                         min="0"
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/15"
+                        className="w-full rounded-2xl border border-border bg-surface-subtle px-4 py-3 text-text-primary outline-none transition placeholder:text-text-tertiary focus:border-accent focus:bg-surface-elevated focus:ring-4 focus:ring-accent/15"
                         placeholder="100.00"
                         onChange={handleChange}
                     />
                 </label>
 
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-slate-700">Description (optionnel)</span>
+                    <span className="text-sm font-medium text-text-secondary">Description (optionnel)</span>
                     <textarea
                         name="description"
                         value={formData.description}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:bg-white focus:ring-4 focus:ring-sky-500/15"
+                        className="w-full rounded-2xl border border-border bg-surface-subtle px-4 py-3 text-text-primary outline-none transition placeholder:text-text-tertiary focus:border-accent focus:bg-surface-elevated focus:ring-4 focus:ring-accent/15"
                         placeholder="Ex: Paiement de loyer"
                         rows={3}
                         onChange={handleChange}
@@ -120,7 +120,7 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex w-full items-center justify-center rounded-2xl bg-sky-600 px-4 py-3.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="flex w-full items-center justify-center rounded-2xl bg-accent px-4 py-3.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-primary disabled:cursor-not-allowed disabled:opacity-70"
                 >
                     {loading ? 'Traitement...' : 'Effectuer le virement'}
                 </button>

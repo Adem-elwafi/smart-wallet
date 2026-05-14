@@ -1,6 +1,35 @@
 @import "tailwindcss";
 
 :root {
+  /* Semantic Color Variables - FinTech Professional Palette */
+  --color-primary: #1E3A8A;
+  --color-primary-light: #3B82F6;
+  --color-primary-lighter: #DBEAFE;
+  
+  --color-accent: #3B82F6;
+  --color-accent-light: #93C5FD;
+  
+  --color-surface: #F8FAFC;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-subtle: #F1F5F9;
+  
+  --color-text-primary: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-tertiary: #94A3B8;
+  --color-text-inverse: #F8FAFC;
+  
+  --color-success: #10B981;
+  --color-success-light: #D1FAE5;
+  
+  --color-error: #EF4444;
+  --color-error-light: #FEE2E2;
+  
+  --color-warning: #F59E0B;
+  --color-warning-light: #FEF3C7;
+  
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  
   color-scheme: dark;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #e2e8f0;

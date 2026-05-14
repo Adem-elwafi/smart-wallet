@@ -53,23 +53,23 @@ const Dashboard: React.FC = () => {
     return `•••• •••• •••• ${number.slice(-4)}`;
   };
 
-  if (loading) return <div className="flex justify-center items-center h-64 text-slate-500">Chargement...</div>;
+  if (loading) return <div className="flex justify-center items-center h-64 text-text-tertiary">Chargement...</div>;
 
   return (
     <div className="space-y-8">
       {/* Header & Carte Bancaire Stylisée */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Tableau de Bord</h1>
-          <p className="mt-1 text-sm text-slate-600">Bienvenue dans votre SmartWallet</p>
+          <h1 className="text-3xl font-bold text-text-primary">Tableau de Bord</h1>
+          <p className="mt-1 text-sm text-text-secondary">Bienvenue dans votre SmartWallet</p>
         </div>
 
-        <div className="relative h-48 w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-br from-blue-700 via-blue-900 to-black p-6 text-white shadow-xl md:ml-auto">
-          <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-blue-500 opacity-20 blur-2xl"></div>
+        <div className="relative h-48 w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-primary to-black p-6 text-white shadow-xl md:ml-auto">
+          <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-accent opacity-20 blur-2xl"></div>
           
           <div className="relative z-10 flex justify-between items-start mb-6">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-blue-200">Solde Actuel</p>
+              <p className="text-xs font-medium uppercase tracking-wider text-accent-light">Solde Actuel</p>
               <h2 className="mt-1 text-2xl font-bold">
                 {wallet?.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) ?? '0,00'} 
                 <span className="ml-2 text-lg">{wallet?.currency ?? 'TND'}</span>
@@ -81,7 +81,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           <div className="relative z-10 mt-auto">
-            <p className="mb-1 text-[10px] text-blue-100 uppercase tracking-widest">Numéro de Compte</p>
+            <p className="mb-1 text-[10px] text-accent-lighter uppercase tracking-widest">Numéro de Compte</p>
             <div className="flex items-center gap-4">
               <span className="font-mono text-lg tracking-[0.2em]">
                 {wallet ? formatAccountNumber(wallet.accountNumber) : '•••• •••• •••• ••••'}
@@ -100,16 +100,16 @@ const Dashboard: React.FC = () => {
       {/* Grille principale : Transfert Rapide & Historique */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-900">Transfert Rapide</h2>
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-text-primary">Transfert Rapide</h2>
+          <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 shadow-sm">
             <TransferForm onTransferSuccess={loadData} />
           </div>
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-900">Historique</h2>
-          {error && <div className="p-3 text-sm text-rose-700 bg-rose-50 rounded-xl border border-rose-200">{error}</div>}
-          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-text-primary">Historique</h2>
+          {error && <div className="p-3 text-sm text-error-dark bg-error-light rounded-xl border border-error">{error}</div>}
+          <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 shadow-sm">
             <TransactionsList transactions={transactions} autoLoad={true} />
           </div>
         </section>
