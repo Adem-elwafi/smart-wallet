@@ -1,98 +1,119 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getMyWallet } from '../services/wallet.service';
-import type { WalletResponse } from '../api/types';
 import axios from 'axios';
 
-const Dashboard: React.FC = () => {
-  const [wallet, setWallet] = useState<WalletResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [showFullAccount, setShowFullAccount] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const navigate = useNavigate();
+// Correction des chemins d'importation (remonter de deux niveaux)
+import TransactionsList from '../../../src/components/TransactionsList';
+import TransferForm from '../../../src/components/TransferForm';
+import { getMyWallet } from '../../../src/services/wallet.service';
+import { getTransactionHistory } from '../../../src/services/transaction.service';
+import type { TransactionResponse, WalletResponse } from '../../../src/api/types';
 
-  useEffect(() => {
-    const fetchWalletData = async () => {
-      try {
-        const data = await getMyWallet();
-        setWallet(data);
-      } catch (error: unknown) {
-        // Redirection si le token est expiré ou invalide (401 ou 403)
-        if (axios.isAxiosError(error) && (error.response?.status === 401 || error.response?.status === 403)) {
+const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+  const [wallet, setWallet] = useState<WalletResponse | null>(null);
+  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [showFullAccount, setShowFullAccount] = useState<boolean>(false);
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [walletData, txData] = await Promise.all([
+        getMyWallet(),
+        getTransactionHistory(),
+      ]);
+      setWallet(walletData);
+      setTransactions(txData);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 401 || err.response?.status === 403) {
           localStorage.removeItem('token');
           navigate('/login');
+          return;
         }
-      } finally {
-        setLoading(false);
+        const errorMessage = err.response?.data?.message;
+        setError(typeof errorMessage === 'string' ? errorMessage : 'Impossible de charger les données.');
+      } else {
+        setError('Une erreur inattendue est survenue.');
       }
-    };
-
-    fetchWalletData();
+    } finally {
+      setLoading(false);
+    }
   }, [navigate]);
 
-  const formatAccountNumber = (number: string) => {
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
+
+  const formatAccountNumber = (number: string): string => {
     if (showFullAccount) return number;
-    return `${number.substring(0, 6)} •••• •••• ${number.slice(-2)}`;
+    return `•••• •••• •••• ${number.slice(-4)}`;
   };
 
-  const copyToClipboard = () => {
-    if (wallet) {
-      navigator.clipboard.writeText(wallet.accountNumber);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  if (loading) return <div className="flex justify-center items-center h-64">Chargement...</div>;
+  if (loading) return <div className="flex justify-center items-center h-64 text-slate-500">Chargement...</div>;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-900">Tableau de Bord</h1>
-        <p className="mt-1 text-sm text-slate-600">Bienvenue dans votre SmartWallet</p>
-      </div>
-
-      {/* Carte de Crédit Stylisée */}
-      <div className="relative w-full max-w-md h-56 bg-gradient-to-br from-blue-700 via-blue-900 to-black rounded-2xl p-6 shadow-2xl text-white overflow-hidden transform hover:scale-105 transition-transform duration-300">
-        {/* Cercles décoratifs en arrière-plan */}
-        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-blue-500 rounded-full opacity-20 blur-2xl"></div>
-        
-        <div className="flex justify-between items-start mb-10 relative z-10">
-          <div>
-            <p className="text-blue-200 text-sm font-medium uppercase tracking-wider">Solde Actuel</p>
-            <h2 className="text-3xl font-bold mt-1">
-              {wallet?.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} 
-              <span className="text-lg ml-2">{wallet?.currency}</span>
-            </h2>
-          </div>
-          <div className="bg-white/20 p-2 rounded-lg backdrop-blur-md">
-            <div className="w-10 h-6 bg-yellow-400/80 rounded-sm"></div> {/* Puce SIM simulée */}
-          </div>
+    <div className="space-y-8">
+      {/* Header & Carte Bancaire Stylisée */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">Tableau de Bord</h1>
+          <p className="mt-1 text-sm text-slate-600">Bienvenue dans votre SmartWallet</p>
         </div>
 
-        <div className="mt-auto relative z-10">
-          <p className="text-blue-100 text-xs mb-1">Numéro de Compte</p>
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-lg tracking-widest">
-              {wallet ? formatAccountNumber(wallet.accountNumber) : 'SW-XXXXXXXXXX'}
-            </span>
-            <button 
-              onClick={() => setShowFullAccount(!showFullAccount)}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors text-xs"
-            >
-              {showFullAccount ? 'Masquer' : 'Afficher'}
-            </button>
-            <button 
-              onClick={copyToClipboard}
-              className="p-1 hover:bg-white/10 rounded-full transition-colors text-xs"
-            >
-              {copied ? 'Copié!' : 'Copier'}
-            </button>
+        <div className="relative h-48 w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-br from-blue-700 via-blue-900 to-black p-6 text-white shadow-xl md:ml-auto">
+          <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-blue-500 opacity-20 blur-2xl"></div>
+          
+          <div className="relative z-10 flex justify-between items-start mb-6">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wider text-blue-200">Solde Actuel</p>
+              <h2 className="mt-1 text-2xl font-bold">
+                {wallet?.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) ?? '0,00'} 
+                <span className="ml-2 text-lg">{wallet?.currency ?? 'TND'}</span>
+              </h2>
+            </div>
+            <div className="rounded-lg bg-white/20 p-2 backdrop-blur-md">
+              <div className="h-5 w-8 rounded-sm bg-yellow-400/80"></div>
+            </div>
+          </div>
+
+          <div className="relative z-10 mt-auto">
+            <p className="mb-1 text-[10px] text-blue-100 uppercase tracking-widest">Numéro de Compte</p>
+            <div className="flex items-center gap-4">
+              <span className="font-mono text-lg tracking-[0.2em]">
+                {wallet ? formatAccountNumber(wallet.accountNumber) : '•••• •••• •••• ••••'}
+              </span>
+              <button 
+                onClick={() => setShowFullAccount(!showFullAccount)}
+                className="rounded-md bg-white/10 px-2 py-1 text-[10px] hover:bg-white/20 transition-colors"
+              >
+                {showFullAccount ? 'Masquer' : 'Afficher'}
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      
-      {/* Autres sections du dashboard ici */}
+
+      {/* Grille principale : Transfert Rapide & Historique */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-slate-900">Transfert Rapide</h2>
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <TransferForm onTransferSuccess={loadData} />
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-slate-900">Historique</h2>
+          {error && <div className="p-3 text-sm text-rose-700 bg-rose-50 rounded-xl border border-rose-200">{error}</div>}
+          <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <TransactionsList transactions={transactions} autoLoad={true} />
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
