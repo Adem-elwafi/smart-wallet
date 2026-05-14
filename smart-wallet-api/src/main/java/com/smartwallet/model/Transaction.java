@@ -1,0 +1,49 @@
+package com.smartwallet.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "transactions")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Transaction {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal amount;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
+
+    @Column(length = 255)
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_wallet_id", nullable = false)
+    private Wallet senderWallet;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_wallet_id", nullable = false)
+    private Wallet receiverWallet;
+
+    public enum TransactionType {
+        DEBIT,
+        CREDIT
+    }
+}

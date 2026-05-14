@@ -1,0 +1,122 @@
+package com.smartwallet.service;
+
+import com.smartwallet.dto.TransactionResponse;
+import com.smartwallet.dto.TransferRequest;
+import com.smartwallet.dto.WalletResponse;
+import com.smartwallet.model.Transaction;
+import com.smartwallet.model.User;
+import com.smartwallet.model.Wallet;
+import com.smartwallet.repository.TransactionRepository;
+import com.smartwallet.repository.UserRepository;
+import com.smartwallet.repository.WalletRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+
+@Service
+@RequiredArgsConstructor
+public class WalletService {
+
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
+    private static final String PREFIX = "SW-";
+    private static final SecureRandom random = new SecureRandom();
+    private final UserRepository userRepository;
+
+    public Wallet createWalletForUser(User user) {
+        Wallet wallet = Wallet.builder()
+                .accountNumber(generateUniqueAccountNumber())
+                .balance(BigDecimal.ZERO)
+                .currency("TND")
+                .user(user)
+                .build();
+
+        return walletRepository.save(wallet);
+    }
+
+    private String generateUniqueAccountNumber() {
+        String accountNumber;
+        do {
+            StringBuilder sb = new StringBuilder(PREFIX);
+            for (int i = 0; i < 10; i++) {
+                sb.append(random.nextInt(10));
+            }
+            accountNumber = sb.toString();
+        } while (walletRepository.findByAccountNumber(accountNumber).isPresent());
+
+        return accountNumber;
+    }
+
+    public WalletResponse getWalletByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Wallet wallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Wallet not found for this user"));
+
+        return new WalletResponse(
+                wallet.getAccountNumber(),
+                wallet.getBalance(),
+                wallet.getCurrency()
+        );
+    }
+
+    /**
+     * Effectue un virement atomique d'un compte à un autre
+     * @param senderUsername L'utilisateur effectuant le virement
+     * @param transferRequest Les détails du virement
+     * @return La transaction créée
+     * @throws IllegalArgumentException si le solde est insuffisant, le compte destinataire n'existe pas, ou le virement est vers soi-même
+     */
+    @Transactional
+    public TransactionResponse transfer(String senderUsername, TransferRequest transferRequest) {
+        // Récupérer le wallet de l'expéditeur
+        Wallet senderWallet = walletRepository.findByUserId(
+                userRepository.findByUsername(senderUsername)
+                        .orElseThrow(() -> new UsernameNotFoundException("Sender user not found"))
+                        .getId()
+        ).orElseThrow(() -> new RuntimeException("Sender wallet not found"));
+
+        // Récupérer le wallet du destinataire
+        Wallet receiverWallet = walletRepository.findByAccountNumber(transferRequest.recipientAccountNumber())
+                .orElseThrow(() -> new IllegalArgumentException("Recipient account not found"));
+
+        // Vérifier que l'expéditeur ne s'envoie pas d'argent à lui-même
+        if (senderWallet.getId().equals(receiverWallet.getId())) {
+            throw new IllegalArgumentException("Cannot transfer money to the same account");
+        }
+
+        // Vérifier que le solde est suffisant
+        if (senderWallet.getBalance().compareTo(transferRequest.amount()) < 0) {
+            throw new IllegalArgumentException("Insufficient balance");
+        }
+
+        // Effectuer le transfert : débiter l'expéditeur et créditer le destinataire
+        senderWallet.setBalance(senderWallet.getBalance().subtract(transferRequest.amount()));
+        receiverWallet.setBalance(receiverWallet.getBalance().add(transferRequest.amount()));
+
+        // Sauvegarder les wallets
+        walletRepository.save(senderWallet);
+        walletRepository.save(receiverWallet);
+
+        // Créer et sauvegarder les transactions (DEBIT pour l'expéditeur, CREDIT pour le destinataire)
+        Transaction senderTransaction = Transaction.builder()
+                .amount(transferRequest.amount())
+                .timestamp(LocalDateTime.now())
+                .type(Transaction.TransactionType.DEBIT)
+                .description(transferRequest.description())
+                .senderWallet(senderWallet)
+                .receiverWallet(receiverWallet)
+                .build();
+
+        Transaction savedTransaction = transactionRepository.save(senderTransaction);
+
+        return TransactionResponse.fromEntity(savedTransaction);
+    }
+
+}
