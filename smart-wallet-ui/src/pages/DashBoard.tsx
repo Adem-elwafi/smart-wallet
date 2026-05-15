@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Wallet, Send, History, Eye, EyeOff, RefreshCcw } from 'lucide-react'; // Icônes pour le côté pro
 
-// Correction des chemins d'importation (remonter de deux niveaux)
-import TransactionsList from '../../../src/components/TransactionsList';
-import TransferForm from '../../../src/components/TransferForm';
-import { getMyWallet } from '../../../src/services/wallet.service';
-import { getTransactionHistory } from '../../../src/services/transaction.service';
-import type { TransactionResponse, WalletResponse } from '../../../src/api/types';
+import TransactionsList from '../components/TransactionsList';
+import TransferForm from '../components/TransferForm';
+import { getMyWallet } from '../services/wallet.service';
+import { getTransactionHistory } from '../services/transaction.service';
+import type { TransactionResponse, WalletResponse } from '../api/types';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -34,8 +34,7 @@ const Dashboard: React.FC = () => {
           navigate('/login');
           return;
         }
-        const errorMessage = err.response?.data?.message;
-        setError(typeof errorMessage === 'string' ? errorMessage : 'Impossible de charger les données.');
+        setError(err.response?.data?.message || 'Erreur de connexion au serveur.');
       } else {
         setError('Une erreur inattendue est survenue.');
       }
@@ -48,72 +47,99 @@ const Dashboard: React.FC = () => {
     void loadData();
   }, [loadData]);
 
-  const formatAccountNumber = (number: string): string => {
-    if (showFullAccount) return number;
-    return `•••• •••• •••• ${number.slice(-4)}`;
-  };
-
-  if (loading) return <div className="flex justify-center items-center h-64 text-text-tertiary">Chargement...</div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-[60vh] space-y-4">
+        <RefreshCcw className="w-10 h-10 text-sky-600 animate-spin" />
+        <p className="text-slate-500 font-medium italic">Préparation de votre espace sécurisé...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8">
-      {/* Header & Carte Bancaire Stylisée */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-text-primary">Tableau de Bord</h1>
-          <p className="mt-1 text-sm text-text-secondary">Bienvenue dans votre SmartWallet</p>
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 space-y-10">
+      {/* SECTION HEADER & WALLET CARD */}
+      <header className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div className="space-y-2">
+          <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+            Bonjour, <span className="text-sky-600">Adem</span> 👋
+          </h1>
+          <p className="text-slate-500 text-lg">Ravi de vous revoir sur votre SmartWallet.</p>
         </div>
 
-        <div className="relative h-48 w-full max-w-md overflow-hidden rounded-2xl bg-gradient-to-br from-accent via-primary to-black p-6 text-white shadow-xl md:ml-auto">
-          <div className="absolute -bottom-10 -right-10 h-40 w-40 rounded-full bg-accent opacity-20 blur-2xl"></div>
+        {/* CARTE FINTECH STYLISÉE */}
+        <div className="relative w-full max-w-md h-56 rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-sky-900 p-8 text-white shadow-2xl overflow-hidden group transition-transform hover:scale-[1.02]">
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 rounded-full bg-sky-500/10 blur-3xl group-hover:bg-sky-500/20 transition-colors"></div>
           
-          <div className="relative z-10 flex justify-between items-start mb-6">
-            <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-accent-light">Solde Actuel</p>
-              <h2 className="mt-1 text-2xl font-bold">
-                {wallet?.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) ?? '0,00'} 
-                <span className="ml-2 text-lg">{wallet?.currency ?? 'TND'}</span>
-              </h2>
+          <div className="relative z-10 flex justify-between items-start">
+            <div className="space-y-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300/80">Solde Total</p>
+              <div className="text-3xl font-bold flex items-baseline gap-2">
+                {wallet?.balance.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) ?? '0,00'}
+                <span className="text-lg font-medium text-sky-200">{wallet?.currency ?? 'TND'}</span>
+              </div>
             </div>
-            <div className="rounded-lg bg-white/20 p-2 backdrop-blur-md">
-              <div className="h-5 w-8 rounded-sm bg-yellow-400/80"></div>
-            </div>
+            <Wallet className="w-10 h-10 text-sky-400 opacity-80" />
           </div>
 
-          <div className="relative z-10 mt-auto">
-            <p className="mb-1 text-[10px] text-accent-lighter uppercase tracking-widest">Numéro de Compte</p>
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-lg tracking-[0.2em]">
-                {wallet ? formatAccountNumber(wallet.accountNumber) : '•••• •••• •••• ••••'}
-              </span>
-              <button 
-                onClick={() => setShowFullAccount(!showFullAccount)}
-                className="rounded-md bg-white/10 px-2 py-1 text-[10px] hover:bg-white/20 transition-colors"
-              >
-                {showFullAccount ? 'Masquer' : 'Afficher'}
-              </button>
+          <div className="relative z-10 mt-12 flex justify-between items-end">
+            <div className="space-y-2">
+              <p className="text-[10px] text-slate-400 uppercase tracking-widest">Numéro de Compte</p>
+              <p className="font-mono text-xl tracking-wider">
+                {showFullAccount ? wallet?.accountNumber : `•••• •••• •••• ${wallet?.accountNumber.slice(-4)}`}
+              </p>
             </div>
+            <button 
+              onClick={() => setShowFullAccount(!showFullAccount)}
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-all"
+              title={showFullAccount ? "Masquer" : "Afficher"}
+            >
+              {showFullAccount ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Grille principale : Transfert Rapide & Historique */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-text-primary">Transfert Rapide</h2>
-          <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 shadow-sm">
+      {/* GRILLE PRINCIPALE */}
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* COLONNE 1 : ACTION (TRANSFERT) */}
+        <aside className="lg:col-span-1 space-y-6">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="p-2 bg-sky-100 rounded-lg">
+              <Send className="w-5 h-5 text-sky-600" />
+            </div>
+            <h2 className="text-xl font-bold text-slate-800">Envoyer de l'argent</h2>
+          </div>
+          
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 transition-shadow hover:shadow-md">
             <TransferForm onTransferSuccess={loadData} />
           </div>
-        </section>
+        </aside>
 
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-text-primary">Historique</h2>
-          {error && <div className="p-3 text-sm text-error-dark bg-error-light rounded-xl border border-error">{error}</div>}
-          <div className="rounded-2xl border border-border-light bg-surface-elevated p-6 shadow-sm">
+        {/* COLONNES 2 & 3 : ACTIVITÉ (HISTORIQUE) */}
+        <section className="lg:col-span-2 space-y-6">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-slate-100 rounded-lg">
+                <History className="w-5 h-5 text-slate-600" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-800">Activités Récentes</h2>
+            </div>
+            <button onClick={loadData} className="text-sm text-sky-600 hover:underline font-medium">Actualiser</button>
+          </div>
+
+          {error && (
+            <div className="p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 flex items-center gap-3">
+              <span className="flex-1 text-sm">{error}</span>
+            </div>
+          )}
+
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
             <TransactionsList transactions={transactions} autoLoad={true} />
           </div>
         </section>
-      </div>
+      </main>
     </div>
   );
 };
