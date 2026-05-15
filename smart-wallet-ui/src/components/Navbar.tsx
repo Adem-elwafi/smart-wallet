@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { LogOut, Wallet } from 'lucide-react'
+import { LogOut, Wallet, Sun, Moon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import api from '../api/axiosConfig'
 import type { Profile } from '../api/types'
@@ -7,6 +7,23 @@ import type { Profile } from '../api/types'
 function Navbar() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [isLightMode, setIsLightMode] = useState(false)
+
+  // Initialize theme from HTML element on mount
+  useEffect(() => {
+    setIsLightMode(document.documentElement.classList.contains('light-theme'))
+  }, [])
+
+  const toggleTheme = () => {
+    const html = document.documentElement
+    if (html.classList.contains('light-theme')) {
+      html.classList.remove('light-theme')
+      setIsLightMode(false)
+    } else {
+      html.classList.add('light-theme')
+      setIsLightMode(true)
+    }
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -59,6 +76,13 @@ function Navbar() {
               className="text-sm font-medium text-slate-300 transition hover:text-white"
             >
               Dashboard
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="rounded-full p-2 text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+              title="Toggle Theme"
+            >
+              {isLightMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </button>
             <button
               onClick={() => navigate('/profile')}

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Wifi } from 'lucide-react'
 import axios from 'axios'
 import TransactionsList from '../components/TransactionsList'
 import TransferForm from '../components/TransferForm'
@@ -105,8 +106,20 @@ function DashboardPage() {
                 Carte Fintech • {wallet?.accountNumber || '••••'}
               </p>
             </div>
-            {/* Mock EMV Chip */}
-            <div className="h-10 w-12 rounded-md bg-gradient-to-br from-amber-200/90 to-amber-500/90 border border-amber-100/20 opacity-80 shadow-inner backdrop-blur-sm" />
+            {/* Top Right Icons (Contactless + EMV Chip) */}
+            <div className="flex flex-col items-end gap-3">
+              <Wifi className="h-6 w-6 text-white/60 -mr-1 rotate-90" />
+              {/* Mock EMV Chip */}
+              <div className="relative flex h-10 w-12 items-center justify-center rounded-md border border-amber-100/20 bg-gradient-to-br from-amber-200/90 to-amber-500/90 shadow-inner backdrop-blur-sm opacity-90 overflow-hidden">
+                <div className="absolute inset-0 rounded-md border-[0.5px] border-amber-800/20 m-1" />
+                <div className="absolute top-1/2 left-0 h-[0.5px] w-full bg-amber-800/20" />
+                <div className="absolute left-1/3 top-0 h-full w-[0.5px] bg-amber-800/20" />
+                <div className="absolute left-2/3 top-0 h-full w-[0.5px] bg-amber-800/20" />
+                <div className="absolute top-1/4 left-1/3 h-[0.5px] w-1/3 bg-amber-800/20" />
+                <div className="absolute top-3/4 left-1/3 h-[0.5px] w-1/3 bg-amber-800/20" />
+                <div className="absolute left-1/2 top-1/4 h-1/2 w-[0.5px] bg-amber-800/20" />
+              </div>
+            </div>
           </div>
           
           <div>
