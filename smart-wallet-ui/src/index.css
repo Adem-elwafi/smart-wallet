@@ -1,43 +1,48 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+@theme {
+  --color-brand-bg: oklch(14% 0.02 260);
+  --color-brand-surface: oklch(18% 0.03 260);
+  --color-brand-fg: oklch(98% 0.01 240);
+  --color-brand-muted: oklch(70% 0.02 240);
+  --color-brand-accent: oklch(72% 0.16 195);
+  --color-brand-danger: oklch(62% 0.22 15);
+  --color-brand-border: rgba(255, 255, 255, 0.1);
+
+  --font-display: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-premium: 16px;
+
+  --animate-fade-in: fadeIn 0.6s ease-out forwards;
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
 :root {
-  /* Semantic Color Variables - FinTech Professional Palette */
-  --color-primary: #1E3A8A;
-  --color-primary-light: #3B82F6;
-  --color-primary-lighter: #DBEAFE;
+  /* Brand Spec Variables */
+  --bg: oklch(14% 0.02 260);
+  --surface: oklch(18% 0.03 260);
+  --fg: oklch(98% 0.01 240);
+  --muted: oklch(70% 0.02 240);
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: oklch(72% 0.16 195);
+  --danger: oklch(62% 0.22 15);
+
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-blur: blur(12px);
   
-  --color-accent: #3B82F6;
-  --color-accent-light: #93C5FD;
-  
-  --color-surface: #F8FAFC;
-  --color-surface-elevated: #FFFFFF;
-  --color-surface-subtle: #F1F5F9;
-  
-  --color-text-primary: #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-tertiary: #94A3B8;
-  --color-text-inverse: #F8FAFC;
-  
-  --color-success: #10B981;
-  --color-success-light: #D1FAE5;
-  
-  --color-error: #EF4444;
-  --color-error-light: #FEE2E2;
-  
-  --color-warning: #F59E0B;
-  --color-warning-light: #FEF3C7;
-  
-  --color-border: #E2E8F0;
-  --color-border-light: #F1F5F9;
+  --shadow-glow: 0 0 20px rgba(6, 182, 212, 0.15);
   
   color-scheme: dark;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: #e2e8f0;
-  background: #020617;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-display);
+  background-color: var(--bg);
+  color: var(--fg);
 }
 
 * {
@@ -51,28 +56,41 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top left, rgba(59, 130, 246, 0.18), transparent 34%),
-    radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 28%),
-    linear-gradient(180deg, #020617 0%, #0f172a 100%);
-  color: #e2e8f0;
+  background: 
+    radial-gradient(circle at top left, rgba(6, 182, 212, 0.1), transparent 40%),
+    radial-gradient(circle at bottom right, rgba(244, 63, 94, 0.05), transparent 40%),
+    var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+.animate-fade-in {
+  animation: var(--animate-fade-in);
 }
 
-::selection {
-  background: rgba(59, 130, 246, 0.35);
-  color: #fff;
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 /* Light Theme Toggle via CSS Filter Trick */

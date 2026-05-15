@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Wifi } from 'lucide-react'
+import { Copy, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownLeft } from 'lucide-react'
 import axios from 'axios'
 import TransactionsList from '../components/TransactionsList'
 import TransferForm from '../components/TransferForm'
+import StatCard from '../components/StatCard'
 import { getMyWallet } from '../services/wallet.service'
 import { getTransactionHistory } from '../services/transaction.service'
 import type { TransactionResponse, WalletResponse, Profile } from '../api/types'
@@ -36,11 +37,7 @@ function DashboardPage() {
           navigate('/login')
           return
         }
-        const errorMessage = 
-          typeof err.response?.data === 'object' && err.response?.data && 'message' in err.response.data
-            ? (err.response.data as any).message
-            : 'Impossible de charger les données du dashboard.'
-        setError(errorMessage)
+        setError('Impossible de charger les données du dashboard.')
       } else {
         setError('Une erreur inattendue est survenue.')
       }
@@ -53,115 +50,192 @@ function DashboardPage() {
     void loadData()
   }, [loadData])
 
-  // Full-page Skeleton Loader matching the dashboard shape
-  if (loading && !wallet && transactions.length === 0) {
-    return (
-      <div className="mx-auto w-full max-w-6xl space-y-8 p-4 sm:p-6 lg:p-8">
-        {/* Skeleton Wallet Card */}
-        <div className="h-[280px] w-full rounded-[2rem] bg-white/[0.03] border border-white/[0.08] animate-pulse shadow-sm" />
-        
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          {/* Skeleton Transfer Form */}
-          <div className="flex w-full flex-col gap-4 rounded-[2rem] border border-white/[0.08] bg-white/[0.03] p-6 sm:p-8 shadow-xl">
-             <div className="mb-4 h-8 w-48 animate-pulse rounded-lg bg-white/10" />
-             <div className="h-14 w-full animate-pulse rounded-xl bg-white/10" />
-             <div className="h-14 w-full animate-pulse rounded-xl bg-white/10" />
-             <div className="mt-2 h-12 w-40 animate-pulse rounded-xl bg-white/10" />
-          </div>
+  const copyAccountNumber = () => {
+    if (wallet?.accountNumber) {
+      navigator.clipboard.writeText(wallet.accountNumber)
+      // Optional: add a toast notification here
+    }
+  }
 
-          {/* Skeleton Transactions List */}
-          <div className="flex w-full min-h-[400px] flex-col gap-5 rounded-[2rem] border border-white/[0.08] bg-white/[0.03] p-6 sm:p-8 shadow-xl lg:col-span-2">
-             <div className="mb-4 h-8 w-56 animate-pulse rounded-lg bg-white/10" />
-             {[1, 2, 3, 4].map(i => (
-               <div key={i} className="h-20 w-full animate-pulse rounded-2xl bg-white/10" />
-             ))}
-          </div>
-        </div>
-      </div>
-    )
+  // Calculate some mock stats based on transactions
+  const monthlyIncomes = transactions
+    .filter(tx => (wallet?.accountNumber ? tx.recipientAccountNumber === wallet.accountNumber : tx.type === 'CREDIT'))
+    .reduce((acc, tx) => acc + tx.amount, 0)
+  
+  const monthlyExpenses = transactions
+    .filter(tx => (wallet?.accountNumber ? tx.senderAccountNumber === wallet.accountNumber : tx.type === 'DEBIT'))
+    .reduce((acc, tx) => acc + tx.amount, 0)
+
+  if (loading && !wallet) {
+    return <div className="flex h-screen items-center justify-center text-brand-accent">Chargement...</div>
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-8 p-4 sm:p-6 lg:p-8 selection:bg-cyan-500/30">
-      
-      {/* 1. Enhanced Premium Wallet Card */}
-      <section className="group relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-900 via-slate-800 to-black p-8 sm:p-10 shadow-[0_0_40px_-10px_rgba(14,165,233,0.5)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_0_50px_-5px_rgba(14,165,233,0.6)] animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both">
-        
-        {/* SVG Noise Texture Overlay */}
-        <div 
-          className="pointer-events-none absolute inset-0 opacity-[0.04] mix-blend-overlay" 
-          style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.8%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')" }}
-        />
-        
-        {/* Ambient Glowing Orbs */}
-        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-cyan-500/20 blur-[80px] transition-transform duration-700 group-hover:scale-110" />
-        <div className="pointer-events-none absolute -bottom-32 -left-10 h-80 w-80 rounded-full bg-blue-500/20 blur-[80px] transition-transform duration-700 group-hover:scale-110" />
+    <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 space-y-12">
+      <header className="flex items-center justify-between animate-fade-in">
+        <div>
+          <h1 className="text-2xl font-bold text-brand-fg tracking-tight">SmartWallet</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-brand-muted">Bonjour, {profile?.username}</span>
+          <div className="h-10 w-10 rounded-full bg-brand-surface border border-brand-border" />
+        </div>
+      </header>
 
-        <div className="relative z-10 flex flex-col space-y-8">
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-extrabold tracking-tighter text-white sm:text-5xl">Bonjour, {profile?.fullName?.split(' ')[0] || profile?.username || ''}</h1>
-              <p className="mt-2 flex items-center gap-2 text-sm font-medium text-slate-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.5)] animate-pulse" />
-                Carte Fintech • {wallet?.accountNumber || '••••'}
-              </p>
+      <div className="dashboard-grid">
+        {/* Wallet Section */}
+        <section className="col-span-full animate-fade-in mb-4">
+          <div className="credit-card glass relative h-60 flex flex-col justify-between p-8 rounded-premium overflow-hidden transition-transform hover:-translate-y-1 hover:shadow-glow group cursor-pointer"
+               style={{ background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(2, 6, 23, 0.4) 100%)' }}>
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-xs uppercase tracking-widest text-brand-muted mb-2">Solde Total</div>
+                <div className="text-4xl font-bold text-brand-fg">
+                  {(wallet?.balance || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                </div>
+              </div>
+              <div className="text-xl font-black text-brand-fg/60">VISA</div>
             </div>
-            {/* Top Right Icons (Contactless + EMV Chip) */}
-            <div className="flex flex-col items-end gap-3">
-              <Wifi className="h-6 w-6 text-white/60 -mr-1 rotate-90" />
-              {/* Mock EMV Chip */}
-              <div className="relative flex h-10 w-12 items-center justify-center rounded-md border border-amber-100/20 bg-gradient-to-br from-amber-200/90 to-amber-500/90 shadow-inner backdrop-blur-sm opacity-90 overflow-hidden">
-                <div className="absolute inset-0 rounded-md border-[0.5px] border-amber-800/20 m-1" />
-                <div className="absolute top-1/2 left-0 h-[0.5px] w-full bg-amber-800/20" />
-                <div className="absolute left-1/3 top-0 h-full w-[0.5px] bg-amber-800/20" />
-                <div className="absolute left-2/3 top-0 h-full w-[0.5px] bg-amber-800/20" />
-                <div className="absolute top-1/4 left-1/3 h-[0.5px] w-1/3 bg-amber-800/20" />
-                <div className="absolute top-3/4 left-1/3 h-[0.5px] w-1/3 bg-amber-800/20" />
-                <div className="absolute left-1/2 top-1/4 h-1/2 w-[0.5px] bg-amber-800/20" />
+            
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-4 font-mono text-lg tracking-[0.2em] text-brand-fg/90">
+                {wallet?.accountNumber || 'SW-0000-0000'}
+                <button 
+                  onClick={(e) => { e.stopPropagation(); copyAccountNumber(); }}
+                  className="bg-white/5 border border-white/10 text-brand-muted px-2 py-1 rounded-md text-xs tracking-normal hover:bg-white/10 hover:text-brand-fg transition-colors"
+                >
+                  Copier
+                </button>
+              </div>
+              <div className="text-[10px] text-brand-muted uppercase">Expire fin 05/28</div>
+            </div>
+
+            {/* Decorative background elements */}
+            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-brand-accent/10 rounded-full blur-3xl" />
+          </div>
+        </section>
+
+        {/* Stats Grid */}
+        <section className="col-span-full grid grid-cols-1 md:grid-cols-3 gap-6">
+          <StatCard 
+            title="Revenus ce mois" 
+            value={`${monthlyIncomes.toLocaleString('fr-FR')} €`} 
+            trend={12} 
+            delay="0.1s" 
+          />
+          <StatCard 
+            title="Dépenses" 
+            value={`${monthlyExpenses.toLocaleString('fr-FR')} €`} 
+            trend={-5} 
+            delay="0.2s" 
+          />
+          <StatCard 
+            title="Économies" 
+            value={`${(monthlyIncomes - monthlyExpenses).toLocaleString('fr-FR')} €`} 
+            trend={8} 
+            delay="0.3s" 
+          />
+        </section>
+
+        {/* Main Grid: Transfer + History */}
+        <div className="col-span-full grid grid-cols-1 lg:grid-cols-3 gap-8 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          {/* Left: Transfer Zone */}
+          <aside className="lg:col-span-1 h-fit">
+            <div className="glass rounded-premium p-8 h-full">
+              <h3 className="text-xl font-bold text-brand-fg mb-6">Transfert Rapide</h3>
+              <TransferForm onTransferSuccess={loadData} />
+            </div>
+          </aside>
+
+          {/* Right: History Zone */}
+          <section className="lg:col-span-2">
+            <div className="glass rounded-premium p-8 min-h-[400px]">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-xl font-bold text-brand-fg">Activités Récentes</h3>
+                <button className="text-sm font-medium text-brand-accent hover:underline">Voir tout</button>
+              </div>
+              <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
+            </div>
+          </section>
+        </div>
+
+        {/* Analytics Section */}
+        <section className="col-span-full animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <div className="glass rounded-premium p-8">
+            <div className="flex justify-between items-end mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-brand-fg">Analyses</h2>
+                <p className="text-brand-muted text-sm mt-2">Dépenses sur les 30 derniers jours</p>
+              </div>
+              <div className="text-brand-accent font-bold text-2xl">+ 340,50 €</div>
+            </div>
+            
+            <div className="h-[300px] w-full relative">
+              <svg width="100%" height="100%" viewBox="0 0 1000 300" preserveAspectRatio="none" className="overflow-visible">
+                <defs>
+                  <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.2" />
+                    <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+                  </linearGradient>
+                </defs>
+                
+                {/* Grid lines */}
+                {[50, 150, 250].map(y => (
+                  <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="var(--border)" strokeWidth="1" strokeDasharray="4,4" />
+                ))}
+
+                {/* Area under curve */}
+                <path 
+                  d="M0 300 L0 200 Q 150 150, 300 220 T 600 100 T 1000 150 L 1000 300 Z" 
+                  fill="url(#chartGradient)" 
+                />
+                
+                {/* Main line */}
+                <path 
+                  d="M0 200 Q 150 150, 300 220 T 600 100 T 1000 150" 
+                  fill="none" 
+                  stroke="var(--accent)" 
+                  strokeWidth="3" 
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+              <div>
+                <h4 className="text-brand-fg font-bold mb-6">Top Catégories</h4>
+                <div className="space-y-6">
+                  {[
+                    { label: 'Alimentation', value: 45, color: 'var(--accent)' },
+                    { label: 'Loisirs', value: 30, color: 'var(--danger)' },
+                    { label: 'Transport', value: 15, color: 'var(--accent)' }
+                  ].map(cat => (
+                    <div key={cat.label}>
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-brand-muted">{cat.label}</span>
+                        <span className="text-brand-fg font-bold">{cat.value}%</span>
+                      </div>
+                      <div className="h-2 bg-brand-surface rounded-full overflow-hidden">
+                        <div 
+                          className="h-full transition-all duration-1000" 
+                          style={{ width: `${cat.value}%`, backgroundColor: cat.color }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col justify-center glass bg-brand-accent/5 border-brand-accent/10 p-6 rounded-2xl">
+                <h4 className="text-brand-fg font-bold mb-2">Comparaison</h4>
+                <p className="text-sm text-brand-muted mb-6">Vous avez dépensé 12% de moins que le mois dernier. Beau travail !</p>
+                <div className="text-3xl font-bold text-brand-accent">+ 340,50 €</div>
+                <div className="text-xs text-brand-muted mt-1 uppercase tracking-wider">Économisés par rapport à Avril</div>
               </div>
             </div>
           </div>
-          
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Solde Disponible</p>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-5xl font-black tracking-tight text-transparent sm:text-7xl">
-                {(wallet?.balance || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </span>
-              <span className="text-2xl font-bold text-cyan-400 sm:text-3xl">{wallet?.currency || 'TND'}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* 2. Glassy Transfer Form Section */}
-        <section className="rounded-[2rem] border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8 backdrop-blur-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[150ms] fill-mode-both lg:col-span-1">
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-white/90">Envoyer de l'argent</h2>
-          </div>
-          <TransferForm onTransferSuccess={loadData} />
-        </section>
-
-        {/* 3. Glassy Recent Activities Section */}
-        <section className="rounded-[2rem] border border-white/[0.08] bg-white/[0.02] p-6 sm:p-8 backdrop-blur-2xl shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-[300ms] fill-mode-both lg:col-span-2">
-          <div className="mb-8 flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight text-white/90">Activités récentes</h2>
-          </div>
-
-          {error && (
-            <div className="mb-6 flex items-center gap-3 rounded-2xl border border-rose-500/25 bg-rose-500/10 px-5 py-4 text-sm text-rose-300 backdrop-blur-sm">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              {error}
-            </div>
-          )}
-
-          <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
         </section>
       </div>
-      
     </div>
   )
 }
