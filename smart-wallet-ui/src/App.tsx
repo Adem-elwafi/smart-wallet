@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage'
 import Dashboard from './pages/DashBoard'
 import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
+import HomePage from './pages/HomePage'
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
   const token = localStorage.getItem('token')
@@ -30,17 +31,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Redirect root to dashboard if authenticated, else to login */}
-        <Route
-          path="/"
-          element={
-            localStorage.getItem('token') ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+        <Route path="/" element={<HomePage />} />
 
         {/* Auth Pages - No Layout */}
         <Route
@@ -82,8 +73,8 @@ function App() {
           }
         />
 
-        {/* Catch all - redirect to login */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

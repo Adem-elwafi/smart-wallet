@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Send, CheckCircle2, Loader2, Sparkles } from 'lucide-react'
+import { Send, CheckCircle2, Loader2, Sparkles, AlertCircle } from 'lucide-react'
 import type { TransferRequest, TransactionResponse } from '../api/types'
 import { initiateTransfer } from '../services/transaction.service'
 
@@ -16,6 +16,7 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
     })
     const [loading, setLoading] = useState(false)
     const [successMessage, setSuccessMessage] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -25,21 +26,27 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
         }))
         // Clear success state on new input
         if (successMessage) setSuccessMessage('')
+        if (errorMessage) setErrorMessage('')
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setSuccessMessage('')
+        setErrorMessage('')
 
         if (!formData.recipientAccountNumber.trim()) {
-            onError?.('Veuillez entrer le numéro de compte du destinataire')
+            const msg = 'Veuillez entrer le numéro de compte du destinataire'
+            setErrorMessage(msg)
+            onError?.(msg)
             setLoading(false)
             return
         }
 
         if (formData.amount <= 0) {
-            onError?.('Le montant doit être supérieur à 0')
+            const msg = 'Le montant doit être supérieur à 0'
+            setErrorMessage(msg)
+            onError?.(msg)
             setLoading(false)
             return
         }
@@ -54,8 +61,9 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
             })
             onTransferSuccess?.(response)
         } catch (error: any) {
-            const errorMessage = error.response?.data?.message || 'Erreur lors du virement'
-            onError?.(errorMessage)
+            const errorMsg = error.response?.data?.message || 'Erreur lors du virement'
+            setErrorMessage(errorMsg)
+            onError?.(errorMsg)
         } finally {
             setLoading(false)
         }
@@ -88,6 +96,18 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
                     <div>
                         <p className="font-bold tracking-tight">C'est envoyé !</p>
                         <p className="text-sm font-medium text-emerald-600/80">{successMessage}</p>
+                    </div>
+                </div>
+            )}
+
+            {errorMessage && (
+                <div className="mb-8 flex items-center gap-4 rounded-2xl border border-rose-200/60 bg-rose-500/10 p-5 text-rose-300 shadow-lg shadow-rose-500/10 backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-rose-500/20 text-rose-500">
+                        <AlertCircle className="h-6 w-6" />
+                    </div>
+                    <div>
+                        <p className="font-bold tracking-tight text-rose-400">Erreur</p>
+                        <p className="text-sm font-medium text-rose-300/80">{errorMessage}</p>
                     </div>
                 </div>
             )}

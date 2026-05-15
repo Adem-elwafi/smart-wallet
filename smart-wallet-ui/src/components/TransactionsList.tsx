@@ -7,12 +7,14 @@ interface TransactionsListProps {
   transactions?: TransactionResponse[];
   autoLoad?: boolean;
   onLoad?: (transactions: TransactionResponse[]) => void;
+  currentAccountNumber?: string;
 }
 
 const TransactionsList: React.FC<TransactionsListProps> = ({ 
   transactions: initialTransactions = [],
   autoLoad = false,
-  onLoad 
+  onLoad,
+  currentAccountNumber
 }) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>(initialTransactions);
   const [loading, setLoading] = useState(false);
@@ -99,7 +101,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
   return (
     <div className="w-full space-y-3">
       {transactions?.map((tx) => {
-        const isCredit = tx.type === 'CREDIT';
+        const isCredit = currentAccountNumber ? tx.recipientAccountNumber === currentAccountNumber : tx.type === 'CREDIT';
         const timestamp = new Date(tx.timestamp);
         const formattedDate = timestamp.toLocaleDateString('fr-FR', { 
           day: 'numeric', 

@@ -158,7 +158,7 @@ function DashboardPage() {
             </div>
           )}
 
-          <TransactionsList transactions={transactions} />
+          <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
         </section>
       </div>
       
