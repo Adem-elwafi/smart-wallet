@@ -26,35 +26,35 @@ function Login() {
     }
 
     return (
-        <div className="rounded-3xl border border-border-light bg-surface-elevated p-6 shadow-2xl shadow-slate-950/30 backdrop-blur-xl sm:p-8">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl sm:p-8">
             <div className="mb-8 space-y-2 text-left">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-accent">Login</p>
-                <h2 className="text-3xl font-semibold tracking-tight text-text-primary">Sign in</h2>
-                <p className="text-sm leading-6 text-text-secondary">
+                <p className="text-sm font-medium uppercase tracking-[0.24em] text-cyan-400">Login</p>
+                <h2 className="text-3xl font-semibold tracking-tight text-white">Sign in</h2>
+                <p className="text-sm leading-6 text-white/60">
                     Use your SmartWallet credentials to reach your dashboard.
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-text-secondary">Nom d&apos;utilisateur</span>
+                    <span className="text-sm font-medium text-white/80">Nom d&apos;utilisateur</span>
                     <input
                         type="text"
                         value={credentials.username}
                         required
-                        className="w-full rounded-2xl border border-border bg-surface-subtle px-4 py-3 text-text-primary outline-none transition placeholder:text-text-tertiary focus:border-accent focus:bg-surface-elevated focus:ring-4 focus:ring-accent/15"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-500 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/20"
                         placeholder="adem_dev"
                         onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                     />
                 </label>
 
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-text-secondary">Mot de passe</span>
+                    <span className="text-sm font-medium text-white/80">Mot de passe</span>
                     <input
                         type="password"
                         value={credentials.password}
                         required
-                        className="w-full rounded-2xl border border-border bg-surface-subtle px-4 py-3 text-text-primary outline-none transition placeholder:text-text-tertiary focus:border-accent focus:bg-surface-elevated focus:ring-4 focus:ring-accent/15"
+                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-500 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/20"
                         placeholder="••••••••"
                         onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                     />
@@ -62,15 +62,15 @@ function Login() {
 
                 <button
                     disabled={loading}
-                    className="flex w-full items-center justify-center rounded-2xl bg-text-primary px-4 py-3.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="flex w-full items-center justify-center rounded-2xl bg-cyan-500 px-4 py-3.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cyan-400 shadow-lg shadow-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                     {loading ? 'Connexion...' : 'Se connecter'}
                 </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-text-secondary">
+            <p className="mt-6 text-center text-sm text-white/60">
                 Pas encore de compte ?{' '}
-                <Link to="/register" className="font-semibold text-primary transition hover:text-primary hover:underline">
+                <Link to="/register" className="font-semibold text-cyan-400 transition hover:text-cyan-300 hover:underline">
                     Créer un compte
                 </Link>
             </p>

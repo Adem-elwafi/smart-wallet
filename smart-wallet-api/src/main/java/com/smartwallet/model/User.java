@@ -36,7 +36,8 @@ public class User implements UserDetails {
     @Column
     private String fullName;
 
-    @Column
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String avatarUrl;
 
     @Column(nullable = false)

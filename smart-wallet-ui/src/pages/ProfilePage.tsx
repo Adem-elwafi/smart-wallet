@@ -1,4 +1,4 @@
-import { useEffect, useState, FormEvent, ChangeEvent } from 'react'
+import { useEffect, useState, type FormEvent, type ChangeEvent } from 'react'
 import axios from 'axios'
 import api from '../api/axiosConfig'
 import type { Profile, UpdateProfileRequest } from '../api/types'
@@ -205,6 +205,23 @@ export default function ProfilePage() {
     setSuccess(null)
   }
 
+  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError("L'image est trop grande (max 5MB)")
+        return
+      }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setFormData((prev: UpdateProfileRequest) => ({ ...prev, avatarUrl: reader.result as string }))
+        setError(null)
+        setSuccess(null)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setSaving(true)
@@ -228,7 +245,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#070b18]">
+      <div className="flex min-h-[80vh] items-center justify-center bg-transparent">
         <div className="flex flex-col items-center gap-4">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-500/30 border-t-cyan-500"></div>
           <span className="text-sm font-light tracking-[0.2em] uppercase text-cyan-500/80">Chargement...</span>
@@ -239,7 +256,7 @@ export default function ProfilePage() {
 
   return (
     /* ── Full-page wrapper with animated mesh background ── */
-    <div className="relative min-h-screen w-full overflow-hidden flex items-center justify-center px-4 py-16 bg-[#070b18]">
+    <div className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center px-4 py-8 bg-transparent rounded-3xl">
 
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -277,7 +294,27 @@ export default function ProfilePage() {
             {/* Header background tint */}
             <div className="absolute inset-0 bg-gradient-to-b from-cyan-950/30 to-transparent pointer-events-none" />
 
-            <Avatar initials={getInitials()} avatarUrl={formData.avatarUrl} />
+            <div className="relative group cursor-pointer rounded-full">
+              <Avatar initials={getInitials()} avatarUrl={formData.avatarUrl} />
+              
+              {/* Upload Overlay */}
+              <div className="absolute inset-0 z-10 flex items-center justify-center rounded-full bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              
+              {/* Hidden file input */}
+              <input 
+                type="file" 
+                accept="image/*" 
+                className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0" 
+                onChange={handleImageUpload} 
+                disabled={saving}
+                title="Changer l'avatar"
+              />
+            </div>
 
             <div className="relative mt-6">
               <h1 className="text-xl font-extralight tracking-[0.15em] text-white/90 uppercase">
@@ -316,7 +353,7 @@ export default function ProfilePage() {
 
             {/* Contact */}
             <div>
-              <SectionLabel>Coordonnées & Médias</SectionLabel>
+              <SectionLabel>Coordonnées</SectionLabel>
               <div className="space-y-4">
                 <FloatingInput
                   id="email"
@@ -325,14 +362,6 @@ export default function ProfilePage() {
                   value={formData.email}
                   onChange={handleChange}
                   autoComplete="email"
-                  disabled={saving}
-                />
-                <FloatingInput
-                  id="avatarUrl"
-                  label="URL de l'avatar"
-                  type="url"
-                  value={formData.avatarUrl}
-                  onChange={handleChange}
                   disabled={saving}
                 />
               </div>

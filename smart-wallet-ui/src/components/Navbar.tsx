@@ -1,8 +1,24 @@
 import { useNavigate } from 'react-router-dom'
 import { LogOut, Wallet } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import api from '../api/axiosConfig'
+import type { Profile } from '../api/types'
 
 function Navbar() {
   const navigate = useNavigate()
+  const [profile, setProfile] = useState<Profile | null>(null)
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await api.get<Profile>('/v1/profile/me')
+        setProfile(response.data)
+      } catch (err) {
+        console.error("Failed to fetch profile in navbar", err)
+      }
+    }
+    fetchProfile()
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem('token')
@@ -13,16 +29,26 @@ function Navbar() {
     navigate('/dashboard')
   }
 
+  const getInitials = () => {
+    if (profile?.fullName) {
+      const parts = profile.fullName.split(' ').filter(Boolean)
+      if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
+      return parts[0].substring(0, 2).toUpperCase()
+    }
+    if (profile?.username) return profile.username.substring(0, 2).toUpperCase()
+    return 'US'
+  }
+
   return (
-    <nav className="border-b border-border bg-surface-elevated shadow-sm">
+    <nav className="border-b border-white/[0.08] bg-white/[0.03] backdrop-blur-xl sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <button
             onClick={handleLogoClick}
-            className="flex items-center gap-2 text-xl font-bold text-text-primary transition hover:text-accent"
+            className="flex items-center gap-2 text-xl font-bold text-white transition hover:text-cyan-400"
           >
-            <Wallet className="h-6 w-6 text-accent" />
+            <Wallet className="h-6 w-6 text-cyan-400" />
             SmartWallet
           </button>
 
@@ -30,19 +56,28 @@ function Navbar() {
           <div className="flex items-center gap-6">
             <button
               onClick={() => navigate('/dashboard')}
-              className="text-sm font-medium text-text-secondary transition hover:text-text-primary"
+              className="text-sm font-medium text-slate-300 transition hover:text-white"
             >
               Dashboard
             </button>
             <button
               onClick={() => navigate('/profile')}
-              className="text-sm font-medium text-text-secondary transition hover:text-text-primary"
+              className="flex items-center gap-3 rounded-full bg-white/5 p-1 pr-4 border border-white/10 transition-all hover:bg-white/10 hover:border-white/20 shadow-sm"
             >
-              Profil
+              {profile?.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="Avatar" className="h-8 w-8 rounded-full object-cover border border-white/20" />
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-cyan-600 to-indigo-600 shadow-inner">
+                  <span className="text-xs font-bold text-white">{getInitials()}</span>
+                </div>
+              )}
+              <span className="text-sm font-medium text-white/90">
+                {profile?.fullName?.split(' ')[0] || profile?.username || 'Profil'}
+              </span>
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 rounded-lg bg-error-light px-4 py-2 text-sm font-medium text-error transition hover:bg-error hover:text-white"
+              className="flex items-center gap-2 rounded-lg bg-rose-500/10 px-4 py-2 text-sm font-medium text-rose-400 transition hover:bg-rose-500 hover:text-white"
             >
               <LogOut className="h-4 w-4" />
               Déconnexion
