@@ -1,4 +1,4 @@
-import { ArrowRight, Wallet } from 'lucide-react'
+import { ArrowRight, ChevronRight, LogIn, Sparkles, Wallet } from 'lucide-react'
 import { useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Features from '../components/Features'
@@ -6,58 +6,69 @@ import HowItWorks from '../components/HowItWorks'
 
 function HomePage() {
   const navigate = useNavigate()
-
   const hasToken = useMemo(() => Boolean(localStorage.getItem('token')), [])
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-[#0b0a09] text-zinc-100">
       <style>{`
         @keyframes floatCard {
-          0%, 100% { transform: rotateY(20deg) rotateX(10deg) translateY(0px); }
-          50% { transform: rotateY(26deg) rotateX(15deg) translateY(-16px); }
+          0%, 100% { transform: translateY(0px) rotateZ(-3deg) rotateY(-12deg); }
+          50% { transform: translateY(-18px) rotateZ(-1deg) rotateY(-5deg); }
+        }
+
+        @keyframes driftGlow {
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.45; }
+          50% { transform: translate(18px, -12px) scale(1.04); opacity: 0.7; }
+        }
+
+        @keyframes sparklePulse {
+          0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.75; }
+          50% { transform: scale(1.08) rotate(12deg); opacity: 1; }
         }
       `}</style>
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-md">
-        <nav className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/90 text-white">
+      <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4">
+        <nav className="mx-auto flex w-full max-w-350 items-center justify-between rounded-[22px] border border-white/10 bg-black/55 px-5 py-4 shadow-[0_18px_50px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl md:px-8">
+          <Link to="/" className="flex items-center gap-2.5">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-amber-300/20 bg-[linear-gradient(135deg,rgba(202,138,4,0.95),rgba(250,204,21,0.7))] text-zinc-950 shadow-[0_10px_30px_rgba(202,138,4,0.25)]">
               <Wallet className="h-5 w-5" />
             </span>
-            <span className="text-xl font-bold tracking-tight">SmartWallet</span>
+            <span className="font-semibold tracking-[0.18em] text-amber-100 uppercase">SmartWallet</span>
           </Link>
 
-          <div className="hidden items-center gap-7 text-sm font-medium md:flex">
-            <a href="#features" className="text-slate-400 transition-colors hover:text-cyan-300">
-              Fonctionnalites
+          <div className="hidden items-center gap-8 text-sm font-medium lg:flex">
+            <a href="#services" className="text-zinc-400 transition-colors hover:text-amber-200">
+              Service
             </a>
-            <a href="#how-it-works" className="text-slate-400 transition-colors hover:text-cyan-300">
-              Comment ca marche
+            <a href="#how-it-works" className="text-zinc-400 transition-colors hover:text-amber-200">
+              How It Work
+            </a>
+            <a href="#benefits" className="text-zinc-400 transition-colors hover:text-amber-200">
+              Benefits
+            </a>
+            <a href="#pricing" className="text-zinc-400 transition-colors hover:text-amber-200">
+              Pricing
             </a>
 
-            <button
-              type="button"
-              onClick={() => navigate('/login')}
-              className="text-slate-300 transition-colors hover:text-white"
-            >
-              Connexion
+            <button type="button" onClick={() => navigate('/login')} className="text-zinc-300 transition-colors hover:text-white">
+              Log In
             </button>
 
             <button
               type="button"
               onClick={() => navigate('/register')}
-              className="rounded-full bg-cyan-500 px-5 py-2 text-white transition-colors hover:bg-cyan-400"
+              className="rounded-full border border-amber-300/40 px-5 py-2 text-amber-100 transition-all hover:border-amber-200 hover:bg-amber-200/10"
             >
-              S inscrire
+              Sign Up
             </button>
 
             {hasToken ? (
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className="rounded-full border border-cyan-400/60 bg-cyan-500/10 px-5 py-2 text-cyan-200 transition-colors hover:bg-cyan-500/20"
+                className="rounded-full bg-amber-300 px-5 py-2 font-medium text-zinc-950 transition-colors hover:bg-amber-200"
               >
-                Tableau de bord
+                Dashboard
               </button>
             ) : null}
           </div>
@@ -65,60 +76,265 @@ function HomePage() {
       </header>
 
       <main>
-        <section className="px-6 pb-24 pt-32">
-          <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
-            <div>
-              <h1 className="text-5xl font-bold leading-tight tracking-tight md:text-7xl">
-                Gerez votre argent a la vitesse <span className="text-cyan-400">de la pensee.</span>
+        <section className="relative overflow-hidden px-4 pb-16 pt-36 md:px-6 md:pb-24 md:pt-40">
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(250,204,21,0.18),transparent_24%),radial-gradient(circle_at_82%_30%,rgba(255,255,255,0.08),transparent_24%),radial-gradient(circle_at_70%_82%,rgba(161,98,7,0.18),transparent_28%)]" />
+
+          <div className="mx-auto grid max-w-350 items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative z-10 max-w-2xl">
+              <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-amber-200/15 bg-white/5 px-4 py-2 text-xs font-medium tracking-[0.25em] text-amber-100/80 uppercase backdrop-blur-md">
+                <Sparkles className="h-4 w-4 text-amber-200" />
+                The New Standard of Wealth
+              </div>
+
+              <h1 className="max-w-[10ch] text-5xl font-semibold leading-[0.94] tracking-[-0.06em] text-zinc-50 md:text-7xl xl:text-[5.6rem]">
+                Redefining
+                <span className="block text-(--accent)">Financial Elite.</span>
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate-400 md:text-xl">
-                Une experience fintech nouvelle generation, securisee et ultra intuitive pour piloter vos finances.
+
+              <p className="mt-7 max-w-xl text-base leading-7 text-zinc-400 md:text-lg">
+                Experience the next generation of wealth management. Secure, elegant, and designed for people who want more than a basic banking app.
               </p>
 
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
                   type="button"
                   onClick={() => navigate('/register')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-500 px-8 py-4 text-lg font-semibold text-white shadow-[0_0_24px_rgba(6,182,212,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-cyan-400"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,rgba(250,204,21,0.95),rgba(202,138,4,0.95))] px-7 py-4 text-sm font-semibold tracking-wide text-zinc-950 shadow-[0_18px_50px_-15px_rgba(202,138,4,0.55)] transition-transform hover:-translate-y-0.5"
                 >
-                  Commencer
-                  <ArrowRight className="h-5 w-5" />
+                  Get It Now
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate('/login')}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold tracking-wide text-zinc-100 backdrop-blur-md transition-colors hover:border-amber-200/40 hover:bg-white/10"
+                >
+                  <LogIn className="h-4 w-4" />
+                  Download App
                 </button>
                 {hasToken ? (
                   <button
                     type="button"
                     onClick={() => navigate('/dashboard')}
-                    className="rounded-xl border border-slate-700 bg-slate-900/70 px-6 py-4 font-medium text-slate-200 backdrop-blur-md transition-colors hover:border-cyan-500/50 hover:text-cyan-200"
+                    className="inline-flex items-center justify-center rounded-xl border border-amber-200/25 bg-amber-200/10 px-5 py-4 text-sm font-semibold text-amber-100 transition-colors hover:bg-amber-200/15"
                   >
-                    Aller au dashboard
+                    Go to dashboard
                   </button>
                 ) : null}
               </div>
+
+              <div className="mt-12 flex flex-wrap items-center gap-6 text-sm text-zinc-500">
+                <div className="flex items-center gap-3 rounded-full border border-white/8 bg-white/5 px-4 py-2 backdrop-blur-md">
+                  <span className="h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_16px_rgba(250,204,21,0.8)]" />
+                  Trusted by 50,000+ users
+                </div>
+                <div className="flex items-center gap-3 rounded-full border border-white/8 bg-white/5 px-4 py-2 backdrop-blur-md">
+                  <span className="h-2 w-2 rounded-full bg-white/60" />
+                  Instant transfers • Smart analytics • Premium security
+                </div>
+              </div>
             </div>
 
-            <div className="flex justify-center py-8 lg:py-0">
-              <div className="perspective-[1000px]">
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative h-130 w-full max-w-190 perspective-[1600px]">
                 <div
-                  className="relative h-50 w-[320px] rounded-2xl border border-cyan-300/20 bg-linear-to-br from-cyan-500 to-blue-600 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                    animation: 'floatCard 6s ease-in-out infinite',
-                  }}
+                  className="absolute left-[6%] top-[14%] h-32 w-44 rounded-[28px] border border-amber-200/30 bg-[linear-gradient(135deg,rgba(245,225,146,0.92),rgba(168,134,58,0.9))] shadow-[0_25px_60px_-20px_rgba(202,138,4,0.45)] blur-[0.2px]"
+                  style={{ animation: 'driftGlow 8s ease-in-out infinite' }}
+                />
+
+                <div className="absolute bottom-[6%] left-0 right-0 mx-auto h-36 w-[82%] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(250,204,21,0.3),transparent_68%)] blur-2xl" />
+
+                <div className="absolute bottom-0 right-[2%] h-52 w-[76%] rounded-[999px] bg-[linear-gradient(180deg,rgba(182,138,63,0.82),rgba(55,39,10,0.65))] blur-[1px]" />
+
+                <div
+                  className="absolute right-[10%] top-[18%] h-65 w-105 rounded-[26px] border border-white/10 bg-[linear-gradient(135deg,#1b1a18,#090807)] p-7 shadow-[0_28px_80px_-20px_rgba(0,0,0,0.9)]"
+                  style={{ animation: 'floatCard 7s ease-in-out infinite', transformStyle: 'preserve-3d' }}
                 >
-                  <span className="absolute left-7 top-9 h-8 w-11 rounded bg-linear-to-br from-amber-200 to-amber-500" />
-                  <span className="absolute bottom-8 left-7 text-sm tracking-[0.35em] text-white/90">
-                    •••• •••• •••• 8888
-                  </span>
-                  <span className="absolute right-8 top-8 text-lg font-semibold italic text-white/60">VISA</span>
-                  <span className="absolute bottom-8 right-8 h-10 w-10 rounded-full border-2 border-white/25" />
+                  <div className="flex h-full flex-col justify-between overflow-hidden rounded-[18px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.07),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))] p-6">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-[0.65rem] uppercase tracking-[0.35em] text-zinc-500">SmartWallet</p>
+                        <p className="mt-2 text-lg font-medium text-zinc-100">Elite Black</p>
+                      </div>
+                      <div className="rounded-full border border-amber-200/30 bg-amber-200/10 px-3 py-1 text-[0.65rem] uppercase tracking-[0.3em] text-amber-100">
+                        Credit Card
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-16 rounded-lg border border-amber-200/20 bg-[linear-gradient(135deg,rgba(252,211,77,0.92),rgba(180,140,60,0.9))] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]" />
+                      <div>
+                        <p className="font-mono text-[0.7rem] uppercase tracking-[0.4em] text-zinc-500">Card Number</p>
+                        <p className="mt-2 font-mono text-xl tracking-[0.25em] text-zinc-100">1234 5678 9012 245</p>
+                        <p className="mt-1 text-xs text-zinc-500">06/25</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-zinc-500">Alex Mercer</p>
+                        <p className="mt-1 text-sm text-zinc-300">Premium Account</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-amber-100/80">
+                        <span className="h-2 w-2 rounded-full bg-amber-300" />
+                        Active
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="absolute -left-20 top-7.5 h-52.5 w-82.5 -rotate-45 rounded-3xl border border-amber-100/20 bg-[linear-gradient(135deg,rgba(233,193,98,0.95),rgba(126,94,28,0.9))] shadow-[0_25px_65px_-20px_rgba(0,0,0,0.7)]" />
+                </div>
+
+                <div className="absolute left-[6%] top-[4%] text-amber-200/80" style={{ animation: 'sparklePulse 4.2s ease-in-out infinite' }}>
+                  <ChevronRight className="h-6 w-6 -rotate-45" />
+                </div>
+                <div className="absolute right-[16%] top-[10%] text-amber-200/80" style={{ animation: 'sparklePulse 4.8s ease-in-out infinite' }}>
+                  <ChevronRight className="h-5 w-5 rotate-45" />
+                </div>
+                <div className="absolute bottom-[20%] right-[6%] rounded-[18px] border border-white/8 bg-white/8 px-4 py-3 backdrop-blur-md">
+                  <div className="flex items-center gap-3">
+                    <div className="rounded-xl bg-amber-300 px-4 py-2 text-lg font-semibold text-zinc-950">1.24M</div>
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">World Active User</p>
+                      <div className="mt-2 flex items-center -space-x-2">
+                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-zinc-300 to-zinc-500" />
+                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-zinc-400 to-zinc-700" />
+                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-amber-200 to-amber-500" />
+                        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#0b0a09] bg-zinc-100 text-sm font-semibold text-zinc-900">+</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <Features />
-        <HowItWorks />
+        <section className="px-4 pb-8 md:px-6">
+          <div className="mx-auto grid max-w-350 grid-cols-1 gap-4 border-t border-white/8 pt-8 md:grid-cols-3 xl:grid-cols-4">
+            {[
+              ['01', 'Financial Transaction', 'Manage everything from the wallet experience to daily transfers.'],
+              ['02', 'Easy To Use System', 'Each card and wallet view is structured for clarity and speed.'],
+              ['03', 'Secure by Design', 'JWT-backed security with a clean premium interface.'],
+              ['04', 'Instant Insights', 'Monitor balances and activity in a single glance.'],
+            ].map(([number, title, description]) => (
+              <article key={number} className="rounded-[22px] border border-white/8 bg-white/3 p-5 backdrop-blur-md transition-transform hover:-translate-y-1">
+                <div className="text-sm font-semibold tracking-[0.28em] text-amber-200">{number}</div>
+                <h3 className="mt-3 text-lg font-semibold text-zinc-100">{title}</h3>
+                <p className="mt-2 text-sm leading-6 text-zinc-500">{description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="services" className="px-4 py-16 md:px-6">
+          <div className="mx-auto max-w-350">
+            <div className="mb-10 max-w-2xl">
+              <p className="text-sm font-medium tracking-[0.35em] text-amber-200 uppercase">Service</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-zinc-50 md:text-5xl">Precision tools for modern wealth.</h2>
+              <p className="mt-4 max-w-xl text-base leading-7 text-zinc-400">
+                SmartWallet brings together secure banking, rich analytics, and premium wallet experiences in one refined interface.
+              </p>
+            </div>
+
+            <Features />
+          </div>
+        </section>
+
+        <section id="how-it-works" className="px-4 py-8 md:px-6">
+          <div className="mx-auto max-w-350">
+            <HowItWorks />
+          </div>
+        </section>
+
+        <section id="benefits" className="px-4 py-10 md:px-6">
+          <div className="mx-auto grid max-w-350 gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="rounded-4xl border border-white/8 bg-white/3 p-8 backdrop-blur-md md:p-10">
+              <p className="text-sm font-medium tracking-[0.35em] text-amber-200 uppercase">Benefits</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-tighter text-zinc-50 md:text-5xl">Unrivaled privileges.</h2>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
+                SmartWallet is built to feel premium, fast, and confident, with an interface that makes finance feel simple instead of heavy.
+              </p>
+
+              <div className="mt-10 space-y-6">
+                {[
+                  ['Global reach', 'Built for a borderless financial experience.'],
+                  ['Concierge support', 'Fast, clean, and reassuring help when you need it.'],
+                  ['Elite security', 'Strong authentication and protected flows by default.'],
+                ].map(([title, description]) => (
+                  <div key={title} className="flex gap-4 rounded-3xl border border-white/8 bg-black/20 p-5">
+                    <span className="mt-2 h-2.5 w-2.5 rounded-full bg-amber-300 shadow-[0_0_14px_rgba(250,204,21,0.75)]" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-zinc-100">{title}</h3>
+                      <p className="mt-1 text-sm leading-6 text-zinc-500">{description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div id="pricing" className="rounded-4xl border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0.02))] p-8 backdrop-blur-md md:p-10">
+              <p className="text-sm font-medium tracking-[0.35em] text-amber-200 uppercase">Pricing</p>
+              <h3 className="mt-4 text-2xl font-semibold text-zinc-50">Simple premium access.</h3>
+              <p className="mt-3 text-sm leading-6 text-zinc-500">
+                A clean starting point for users who want a polished, secure SmartWallet experience.
+              </p>
+
+              <div className="mt-8 rounded-[28px] border border-amber-200/15 bg-black/30 p-6">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">Starter</p>
+                    <div className="mt-3 flex items-end gap-2">
+                      <span className="text-5xl font-semibold tracking-tighter text-zinc-50">$12</span>
+                      <span className="mb-1 text-sm text-zinc-500">/ month</span>
+                    </div>
+                  </div>
+                  <span className="rounded-full border border-amber-200/20 px-3 py-1 text-xs uppercase tracking-[0.28em] text-amber-100">Best Value</span>
+                </div>
+
+                <div className="mt-6 space-y-3 text-sm text-zinc-400">
+                  <p>Premium wallet experience</p>
+                  <p>Secure login and routing</p>
+                  <p>Analytics-ready dashboard foundation</p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => navigate('/register')}
+                  className="mt-8 inline-flex w-full items-center justify-center rounded-xl bg-amber-300 px-5 py-4 text-sm font-semibold text-zinc-950 transition-colors hover:bg-amber-200"
+                >
+                  Start Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer className="px-4 pb-10 pt-12 md:px-6 md:pb-14">
+          <div className="mx-auto max-w-350 rounded-4xl border border-white/8 bg-black/30 px-6 py-8 backdrop-blur-md md:px-8">
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div>
+                <Link to="/" className="flex items-center gap-2.5">
+                  <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-300 text-zinc-950">
+                    <Wallet className="h-5 w-5" />
+                  </span>
+                  <span className="font-semibold tracking-[0.18em] text-amber-100 uppercase">SmartWallet</span>
+                </Link>
+                <p className="mt-4 max-w-lg text-sm leading-6 text-zinc-500">
+                  Redefining the boundaries of modern wealth management through elegant technology and a premium banking experience.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-6 text-sm text-zinc-500">
+                <a href="#services" className="transition-colors hover:text-amber-100">Services</a>
+                <a href="#benefits" className="transition-colors hover:text-amber-100">Benefits</a>
+                <a href="#pricing" className="transition-colors hover:text-amber-100">Pricing</a>
+                <button type="button" onClick={() => navigate('/login')} className="transition-colors hover:text-amber-100">Log In</button>
+                <button type="button" onClick={() => navigate('/register')} className="transition-colors hover:text-amber-100">Sign Up</button>
+              </div>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   )

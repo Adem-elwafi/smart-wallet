@@ -28,31 +28,34 @@ const steps: StepItem[] = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="px-6 py-24">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-2">
+    <section className="py-2">
+      <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight text-slate-100 md:text-4xl">Comment ca marche ?</h2>
-          <p className="mt-4 max-w-xl text-lg text-slate-400">
-            Trois etapes simples pour demarrer vite et garder le controle sur votre argent.
+          <p className="text-sm font-medium tracking-[0.35em] text-amber-200 uppercase">How It Works</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-tighter text-zinc-50 md:text-5xl">
+            Three steps to a polished SmartWallet experience.
+          </h2>
+          <p className="mt-4 max-w-xl text-base leading-7 text-zinc-400">
+            The flow is intentionally simple: sign up, create your wallet, and start moving money from a premium interface.
           </p>
 
-          <div className="mt-10 space-y-5">
+          <div className="mt-10 space-y-4">
             {steps.map((step, index) => (
               <div
                 key={step.id}
-                className="group relative rounded-2xl border border-slate-800 bg-slate-900/50 p-5 transition-all duration-300 hover:border-cyan-500/40 hover:bg-slate-900"
+                className="group relative rounded-3xl border border-white/8 bg-white/3 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-200/25 hover:bg-white/5"
               >
                 {index < steps.length - 1 ? (
-                  <span className="pointer-events-none absolute -bottom-6 left-6 h-6 w-px bg-slate-700" />
+                  <span className="pointer-events-none absolute -bottom-4 left-6 h-4 w-px bg-white/10" />
                 ) : null}
 
                 <div className="flex items-start gap-4">
-                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-950 text-sm font-semibold text-cyan-400 transition-colors group-hover:border-cyan-400/60">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-amber-200/15 bg-amber-200/10 text-sm font-semibold text-amber-100 transition-colors group-hover:border-amber-200/40">
                     {step.id}
                   </span>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-100">{step.title}</h3>
-                    <p className="mt-1 text-slate-400">{step.description}</p>
+                    <h3 className="text-lg font-semibold text-zinc-50">{step.title}</h3>
+                    <p className="mt-1 text-zinc-400">{step.description}</p>
                   </div>
                 </div>
               </div>
@@ -60,14 +63,14 @@ function HowItWorks() {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/50 p-1 backdrop-blur-md">
-          <div className="flex aspect-square items-center justify-center rounded-[22px] border border-slate-800 bg-linear-to-br from-cyan-500/10 to-blue-500/10">
+        <div className="rounded-4xl border border-white/8 bg-black/25 p-1 backdrop-blur-md">
+          <div className="flex aspect-square items-center justify-center rounded-[28px] border border-white/8 bg-[linear-gradient(135deg,rgba(250,204,21,0.08),rgba(255,255,255,0.02))]">
             <div className="text-center">
-              <div className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full border border-cyan-500/30 bg-cyan-500/15 text-cyan-300">
+              <div className="mx-auto mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full border border-amber-200/20 bg-amber-200/10 text-amber-100">
                 <Check className="h-10 w-10" />
               </div>
-              <p className="text-2xl font-bold text-slate-100">Pret en un clic</p>
-              <p className="mt-2 text-slate-400">Configuration terminee a 100%</p>
+              <p className="text-2xl font-semibold text-zinc-50">Ready in one click</p>
+              <p className="mt-2 text-zinc-400">Configuration completed to 100%</p>
             </div>
           </div>
         </div>
