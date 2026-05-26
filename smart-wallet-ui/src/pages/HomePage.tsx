@@ -136,37 +136,77 @@ function HomePage() {
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative h-130 w-full max-w-190 perspective-[1600px]">
+              <div className="relative h-130 w-full max-w-180 perspective-[1600px]">
+                <div className="absolute inset-0 rounded-[40px] bg-[radial-gradient(circle_at_65%_40%,rgba(250,204,21,0.16),transparent_25%),radial-gradient(circle_at_25%_75%,rgba(255,255,255,0.06),transparent_22%)]" />
+
                 <div
-                  className="absolute left-[6%] top-[14%] h-32 w-44 rounded-[28px] border border-amber-200/30 bg-[linear-gradient(135deg,rgba(245,225,146,0.92),rgba(168,134,58,0.9))] shadow-[0_25px_60px_-20px_rgba(202,138,4,0.45)] blur-[0.2px]"
+                  className="absolute left-[7%] top-[58%] h-28 w-[82%] rounded-[999px] bg-[linear-gradient(180deg,rgba(187,140,61,0.92),rgba(63,41,11,0.92))] shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]"
+                  style={{ transform: 'skewX(-10deg)' }}
+                />
+
+                <div
+                  className="absolute left-[14%] top-[52%] h-24 w-[68%] rounded-[999px] bg-[radial-gradient(ellipse_at_top,rgba(250,204,21,0.42),rgba(0,0,0,0)_70%)] blur-2xl"
                   style={{ animation: 'driftGlow 8s ease-in-out infinite' }}
                 />
 
-                <div className="absolute bottom-[6%] left-0 right-0 mx-auto h-36 w-[82%] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(250,204,21,0.3),transparent_68%)] blur-2xl" />
+                <div
+                  className="absolute left-[18%] top-[26%] h-50 w-80 rounded-[28px] border border-amber-200/30 bg-[linear-gradient(135deg,rgba(245,225,146,0.96),rgba(168,134,58,0.9))] shadow-[0_28px_70px_-22px_rgba(202,138,4,0.45)]"
+                  style={{ transform: 'rotateY(-18deg) rotateZ(-8deg)', transformStyle: 'preserve-3d' }}
+                >
+                  <div className="flex h-full flex-col justify-between p-6 text-zinc-950">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-[0.62rem] font-semibold uppercase tracking-[0.42em] text-zinc-950/70">SmartWallet</p>
+                        <p className="mt-2 text-lg font-semibold text-zinc-950">Premium Gold</p>
+                      </div>
+                      <div className="rounded-full border border-zinc-950/15 bg-white/20 px-3 py-1 text-[0.62rem] uppercase tracking-[0.28em] text-zinc-950/80">
+                        Credit Card
+                      </div>
+                    </div>
 
-                <div className="absolute bottom-0 right-[2%] h-52 w-[76%] rounded-[999px] bg-[linear-gradient(180deg,rgba(182,138,63,0.82),rgba(55,39,10,0.65))] blur-[1px]" />
+                    <div className="flex items-center gap-4">
+                      <div className="h-11 w-15 rounded-lg border border-zinc-950/10 bg-[linear-gradient(135deg,rgba(255,248,214,0.95),rgba(184,145,65,0.95))] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]" />
+                      <div>
+                        <p className="font-mono text-[0.62rem] uppercase tracking-[0.42em] text-zinc-950/70">Card Number</p>
+                        <p className="mt-2 font-mono text-lg tracking-[0.28em] text-zinc-950">1234 5678 9012 245</p>
+                        <p className="mt-1 text-xs text-zinc-950/70">06/25</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-zinc-950/70">Alex Mercer</p>
+                        <p className="mt-1 text-sm text-zinc-950/75">Premium Account</p>
+                      </div>
+                      <div className="flex items-center gap-2 text-zinc-950/80">
+                        <span className="h-2 w-2 rounded-full bg-zinc-950" />
+                        Active
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <div
-                  className="absolute right-[10%] top-[18%] h-65 w-105 rounded-[26px] border border-white/10 bg-[linear-gradient(135deg,#1b1a18,#090807)] p-7 shadow-[0_28px_80px_-20px_rgba(0,0,0,0.9)]"
+                  className="absolute left-[30%] top-[23%] h-55 w-82.5 rounded-[28px] border border-white/10 bg-[linear-gradient(135deg,#161514,#080807)] p-6 shadow-[0_32px_90px_-20px_rgba(0,0,0,0.95)]"
                   style={{ animation: 'floatCard 7s ease-in-out infinite', transformStyle: 'preserve-3d' }}
                 >
-                  <div className="flex h-full flex-col justify-between overflow-hidden rounded-[18px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.07),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))] p-6">
+                  <div className="flex h-full flex-col justify-between overflow-hidden rounded-[20px] border border-white/5 bg-[radial-gradient(circle_at_top_left,rgba(250,204,21,0.08),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))] p-5">
                     <div className="flex items-start justify-between">
                       <div>
                         <p className="text-[0.65rem] uppercase tracking-[0.35em] text-zinc-500">SmartWallet</p>
                         <p className="mt-2 text-lg font-medium text-zinc-100">Elite Black</p>
                       </div>
                       <div className="rounded-full border border-amber-200/30 bg-amber-200/10 px-3 py-1 text-[0.65rem] uppercase tracking-[0.3em] text-amber-100">
-                        Credit Card
+                        Visa
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-16 rounded-lg border border-amber-200/20 bg-[linear-gradient(135deg,rgba(252,211,77,0.92),rgba(180,140,60,0.9))] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]" />
                       <div>
-                        <p className="font-mono text-[0.7rem] uppercase tracking-[0.4em] text-zinc-500">Card Number</p>
-                        <p className="mt-2 font-mono text-xl tracking-[0.25em] text-zinc-100">1234 5678 9012 245</p>
-                        <p className="mt-1 text-xs text-zinc-500">06/25</p>
+                        <p className="font-mono text-[0.66rem] uppercase tracking-[0.4em] text-zinc-500">Card Number</p>
+                        <p className="mt-2 font-mono text-lg tracking-[0.26em] text-zinc-100">4582 •••• •••• 8824</p>
+                        <p className="mt-1 text-xs text-zinc-500">Elite Black</p>
                       </div>
                     </div>
 
@@ -181,17 +221,16 @@ function HomePage() {
                       </div>
                     </div>
                   </div>
-
-                  <div className="absolute -left-20 top-7.5 h-52.5 w-82.5 -rotate-45 rounded-3xl border border-amber-100/20 bg-[linear-gradient(135deg,rgba(233,193,98,0.95),rgba(126,94,28,0.9))] shadow-[0_25px_65px_-20px_rgba(0,0,0,0.7)]" />
                 </div>
 
-                <div className="absolute left-[6%] top-[4%] text-amber-200/80" style={{ animation: 'sparklePulse 4.2s ease-in-out infinite' }}>
+                <div className="absolute left-[9%] top-[12%] text-amber-200/80" style={{ animation: 'sparklePulse 4.2s ease-in-out infinite' }}>
                   <ChevronRight className="h-6 w-6 -rotate-45" />
                 </div>
-                <div className="absolute right-[16%] top-[10%] text-amber-200/80" style={{ animation: 'sparklePulse 4.8s ease-in-out infinite' }}>
+                <div className="absolute right-[14%] top-[18%] text-amber-200/80" style={{ animation: 'sparklePulse 4.8s ease-in-out infinite' }}>
                   <ChevronRight className="h-5 w-5 rotate-45" />
                 </div>
-                <div className="absolute bottom-[20%] right-[6%] rounded-[18px] border border-white/8 bg-white/8 px-4 py-3 backdrop-blur-md">
+
+                <div className="absolute bottom-[15%] right-[8%] rounded-[18px] border border-white/8 bg-white/8 px-4 py-3 backdrop-blur-md">
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-amber-300 px-4 py-2 text-lg font-semibold text-zinc-950">1.24M</div>
                     <div>

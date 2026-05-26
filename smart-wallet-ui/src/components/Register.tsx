@@ -1,3 +1,4 @@
+import { ArrowRight, Loader2, Lock, Mail, Sparkles, User, UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api/axiosConfig'
@@ -36,76 +37,96 @@ function Register() {
     }
 
     return (
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-slate-950/50 backdrop-blur-xl sm:p-8">
-            <div className="mb-8 space-y-2 text-left">
-                <p className="text-sm font-medium uppercase tracking-[0.24em] text-cyan-400">Register</p>
-                <h2 className="text-3xl font-semibold tracking-tight text-white">Create account</h2>
-                <p className="text-sm leading-6 text-white/60">
-                    Set up your SmartWallet profile and start managing your finances in one place.
-                </p>
+        <div className="rounded-[28px] border border-white/8 bg-black/30 p-8 shadow-2xl shadow-black/40 backdrop-blur-md lg:p-10">
+            <div className="mb-8">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-amber-300/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-amber-200">
+                    <Sparkles className="h-3 w-3" />
+                    Create your elite account
+                </div>
+                <h2 className="text-2xl font-semibold text-white">Registration</h2>
+                <p className="mt-2 text-sm text-zinc-400">Join the ecosystem of premium financial tools.</p>
             </div>
 
-            {error && (
+            {error ? (
                 <div className="mb-5 rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-300">
                     {error}
                 </div>
-            )}
+            ) : null}
 
             <form onSubmit={handleSubmit} className="space-y-5">
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-white/80">Nom d'utilisateur</span>
-                    <input
-                        name="username"
-                        type="text"
-                        value={formData.username}
-                        required
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-500 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/20"
-                        placeholder="adem_dev"
-                        onChange={handleChange}
-                    />
+                    <span className="ml-1 text-xs font-medium uppercase tracking-widest text-zinc-400">Username</span>
+                    <div className="group relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <User className="h-5 w-5 text-zinc-500 transition-colors group-focus-within:text-amber-300/70" />
+                        </div>
+                        <input
+                            name="username"
+                            type="text"
+                            value={formData.username}
+                            required
+                            className="block w-full rounded-xl border border-white/8 bg-white/3 py-3 pl-11 pr-4 text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-amber-300/50 focus:ring-1 focus:ring-amber-300/50"
+                            placeholder="adem_dev"
+                            onChange={handleChange}
+                        />
+                    </div>
                 </label>
 
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-white/80">Adresse email</span>
-                    <input
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        required
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-500 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/20"
-                        placeholder="nom@exemple.com"
-                        onChange={handleChange}
-                    />
+                    <span className="ml-1 text-xs font-medium uppercase tracking-widest text-zinc-400">Email</span>
+                    <div className="group relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <Mail className="h-5 w-5 text-zinc-500 transition-colors group-focus-within:text-amber-300/70" />
+                        </div>
+                        <input
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            required
+                            className="block w-full rounded-xl border border-white/8 bg-white/3 py-3 pl-11 pr-4 text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-amber-300/50 focus:ring-1 focus:ring-amber-300/50"
+                            placeholder="nom@exemple.com"
+                            onChange={handleChange}
+                        />
+                    </div>
                 </label>
 
                 <label className="block space-y-2 text-left">
-                    <span className="text-sm font-medium text-white/80">Mot de passe</span>
-                    <input
-                        name="password"
-                        type="password"
-                        value={formData.password}
-                        required
-                        className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition placeholder:text-white/30 focus:border-cyan-500 focus:bg-white/10 focus:ring-4 focus:ring-cyan-500/20"
-                        placeholder="••••••••"
-                        onChange={handleChange}
-                    />
+                    <span className="ml-1 text-xs font-medium uppercase tracking-widest text-zinc-400">Password</span>
+                    <div className="group relative">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
+                            <Lock className="h-5 w-5 text-zinc-500 transition-colors group-focus-within:text-amber-300/70" />
+                        </div>
+                        <input
+                            name="password"
+                            type="password"
+                            value={formData.password}
+                            required
+                            className="block w-full rounded-xl border border-white/8 bg-white/3 py-3 pl-11 pr-4 text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-amber-300/50 focus:ring-1 focus:ring-amber-300/50"
+                            placeholder="••••••••"
+                            onChange={handleChange}
+                        />
+                    </div>
                 </label>
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="flex w-full items-center justify-center rounded-2xl bg-cyan-500 px-4 py-3.5 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-cyan-400 shadow-lg shadow-cyan-500/25 disabled:cursor-not-allowed disabled:opacity-70"
+                    className="group flex w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,rgba(250,204,21,0.95),rgba(202,138,4,0.95))] px-4 py-4 font-semibold text-zinc-950 shadow-[0_18px_40px_-15px_rgba(202,138,4,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_22px_50px_-12px_rgba(202,138,4,0.55)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0"
                 >
-                    {loading ? 'Traitement...' : "S'inscrire"}
+                    {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <UserPlus className="h-5 w-5" />}
+                    <span>{loading ? 'Traitement...' : 'Create Account'}</span>
+                    {!loading ? <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /> : null}
                 </button>
             </form>
 
-            <p className="mt-6 text-center text-sm text-white/60">
-                Déjà un compte ?{' '}
-                <Link to="/login" className="font-semibold text-cyan-400 transition hover:text-cyan-300 hover:underline">
-                    Se connecter
-                </Link>
-            </p>
+            <div className="mt-8 border-t border-white/5 pt-6 text-center text-sm text-zinc-500">
+                <p>
+                    Déjà un compte ?{' '}
+                    <Link to="/login" className="font-medium text-amber-200 transition-colors hover:text-amber-100">
+                        Se connecter
+                    </Link>
+                </p>
+            </div>
         </div>
     )
 }
