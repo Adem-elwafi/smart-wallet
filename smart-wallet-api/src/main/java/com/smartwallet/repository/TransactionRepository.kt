@@ -17,7 +17,8 @@ interface TransactionRepository : JpaRepository<Transaction, Long> {
      */
     @Query("""
         SELECT t FROM Transaction t 
-        WHERE t.senderWallet.id = :walletId OR t.receiverWallet.id = :walletId
+        LEFT JOIN t.receiverWallet rw
+        WHERE t.senderWallet.id = :walletId OR rw.id = :walletId
         ORDER BY t.timestamp DESC
     """)
     fun findAllByWalletId(@Param("walletId") walletId: Long): List<Transaction>

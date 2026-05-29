@@ -1,6 +1,8 @@
 package com.smartwallet.service;
 
 import com.smartwallet.dto.TransactionResponse;
+import com.smartwallet.exception.InsufficientBalanceException;
+import com.smartwallet.model.TransactionCategory;
 import com.smartwallet.dto.TransferRequest;
 import com.smartwallet.dto.WalletResponse;
 import com.smartwallet.model.Transaction;
@@ -117,6 +119,44 @@ public class WalletService {
         Transaction savedTransaction = transactionRepository.save(senderTransaction);
 
         return TransactionResponse.fromEntity(savedTransaction);
+    }
+
+    @Transactional
+    public TransactionResponse createExpense(String username, BigDecimal amount, TransactionCategory category, String description) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Expense amount must be greater than zero");
+        }
+
+        if (category == null) {
+            throw new IllegalArgumentException("Expense category is required");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Wallet wallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Wallet not found for this user"));
+
+        if (wallet.getBalance().compareTo(amount) < 0) {
+            throw new InsufficientBalanceException("Insufficient balance for expense");
+        }
+
+        wallet.setBalance(wallet.getBalance().subtract(amount));
+        walletRepository.save(wallet);
+
+        Transaction expenseTransaction = Transaction.builder()
+                .amount(amount)
+                .timestamp(LocalDateTime.now())
+                .type(Transaction.TransactionType.DEBIT)
+                .category(category)
+                .description(description)
+                .senderWallet(wallet)
+                .receiverWallet(null)
+                .build();
+
+        Transaction savedExpense = transactionRepository.save(expenseTransaction);
+
+        return TransactionResponse.fromEntity(savedExpense);
     }
 
 }

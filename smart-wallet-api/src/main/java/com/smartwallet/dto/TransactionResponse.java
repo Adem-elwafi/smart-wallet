@@ -10,6 +10,7 @@ public record TransactionResponse(
         BigDecimal amount,
         LocalDateTime timestamp,
         String type,
+        String category,
         String description,
         String senderAccountNumber,
         String recipientAccountNumber
@@ -20,9 +21,10 @@ public record TransactionResponse(
                 transaction.getAmount(),
                 transaction.getTimestamp(),
                 transaction.getType().toString(),
+            transaction.getCategory() != null ? transaction.getCategory().toString() : null,
                 transaction.getDescription(),
                 transaction.getSenderWallet().getAccountNumber(),
-                transaction.getReceiverWallet().getAccountNumber()
+            transaction.getReceiverWallet() != null ? transaction.getReceiverWallet().getAccountNumber() : null
         );
     }
 }

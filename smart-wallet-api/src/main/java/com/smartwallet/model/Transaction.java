@@ -31,6 +31,10 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private TransactionCategory category;
+
     @Column(length = 255)
     private String description;
 
@@ -38,8 +42,8 @@ public class Transaction {
     @JoinColumn(name = "sender_wallet_id", nullable = false)
     private Wallet senderWallet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_wallet_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "receiver_wallet_id", nullable = true)
     private Wallet receiverWallet;
 
     public enum TransactionType {

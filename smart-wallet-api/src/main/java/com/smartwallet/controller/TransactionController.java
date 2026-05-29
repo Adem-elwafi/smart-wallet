@@ -1,7 +1,9 @@
 package com.smartwallet.controller;
 
+import com.smartwallet.dto.ExpenseRequest;
 import com.smartwallet.dto.TransactionResponse;
 import com.smartwallet.dto.TransferRequest;
+import com.smartwallet.exception.InsufficientBalanceException;
 import com.smartwallet.model.Wallet;
 import com.smartwallet.repository.TransactionRepository;
 import com.smartwallet.repository.UserRepository;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +82,33 @@ public class TransactionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Failed to retrieve transactions: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Enregistre une dépense catégorisée pour l'utilisateur connecté
+     */
+    @PostMapping("/expense")
+    public ResponseEntity<?> createExpense(@RequestBody ExpenseRequest expenseRequest) {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            TransactionResponse response = walletService.createExpense(
+                    authentication.getName(),
+                    expenseRequest.amount(),
+                    expenseRequest.category(),
+                    expenseRequest.description()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (InsufficientBalanceException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("User not found: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Expense creation failed: " + e.getMessage()));
         }
     }
 
