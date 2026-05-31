@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
   ArrowDownLeft,
   ArrowRightLeft,
@@ -14,38 +13,27 @@ import {
 import axios from 'axios'
 import TransactionsList from '../components/TransactionsList'
 import TransferForm from '../components/TransferForm'
-import { getMyWallet } from '../services/wallet.service'
 import { getTransactionHistory } from '../services/transaction.service'
-import type { Profile, TransactionResponse, WalletResponse } from '../api/types'
-import api from '../api/axiosConfig'
+import type { TransactionResponse } from '../api/types'
+import { useAuth } from '../context/AuthContext'
 
 function DashboardPage() {
-  const navigate = useNavigate()
-  const [wallet, setWallet] = useState<WalletResponse | null>(null)
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
-  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { user, wallet, loading: authLoading, logout } = useAuth()
 
   const loadData = useCallback(async () => {
     setLoading(true)
     setError(null)
 
     try {
-      const [walletData, txData, profileResponse] = await Promise.all([
-        getMyWallet(),
-        getTransactionHistory(),
-        api.get<Profile>('/v1/profile/me')
-      ])
-
-      setWallet(walletData)
+      const txData = await getTransactionHistory()
       setTransactions(txData)
-      setProfile(profileResponse.data)
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         if (err.response?.status === 401) {
-          localStorage.removeItem('token')
-          navigate('/login')
+          logout()
           return
         }
 
@@ -56,7 +44,7 @@ function DashboardPage() {
     } finally {
       setLoading(false)
     }
-  }, [navigate])
+  }, [logout])
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -88,7 +76,7 @@ function DashboardPage() {
     { title: 'Économies', value: savings, trend: 8, icon: PieChart, color: 'text-amber-300' }
   ]
 
-  if (loading && !wallet) {
+  if (authLoading || (loading && !wallet)) {
     return (
       <div className="flex h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.08),transparent_35%),linear-gradient(180deg,#090807_0%,#0b0a09_100%)] text-amber-200">
         <div className="flex flex-col items-center gap-4">
@@ -164,7 +152,7 @@ function DashboardPage() {
                       <div className="flex gap-8">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-black/40">Titulaire</p>
-                          <p className="text-sm font-bold uppercase text-black">{profile?.username || 'Utilisateur Elite'}</p>
+                          <p className="text-sm font-bold uppercase text-black">{user?.username || 'Utilisateur Elite'}</p>
                         </div>
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-black/40">Expire</p>

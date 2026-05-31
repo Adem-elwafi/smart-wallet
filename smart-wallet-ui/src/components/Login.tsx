@@ -3,9 +3,11 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api/axiosConfig'
 import type { AuthResponse } from '../api/types'
+import { useAuth } from '../context/AuthContext'
 
 function Login() {
     const navigate = useNavigate()
+    const { refreshUserData } = useAuth()
     const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -18,10 +20,11 @@ function Login() {
         try {
             const response = await api.post<AuthResponse>('/v1/auth/authenticate', credentials)
             localStorage.setItem('token', response.data.token)
+            await refreshUserData()
             navigate('/dashboard')
         } catch (requestError) {
             console.error('Erreur de connexion', requestError)
-            setError('Identifiants invalides. Vérifiez votre nom d’utilisateur et votre mot de passe.')
+            setError('Impossible de démarrer la session. Vérifiez vos identifiants.')
         } finally {
             setLoading(false)
         }

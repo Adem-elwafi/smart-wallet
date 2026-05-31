@@ -6,11 +6,16 @@ import Dashboard from './pages/DashBoard'
 import ProfilePage from './pages/ProfilePage'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
+import { AuthProvider, useAuth } from './context/AuthContext'
 
 function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
-  const token = localStorage.getItem('token')
+  const { isAuthenticated, loading } = useAuth()
 
-  if (!token) {
+  if (loading) {
+    return <div className="min-h-screen bg-[#0b0a09]" />
+  }
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />
   }
 
@@ -18,9 +23,13 @@ function RequireAuth({ children }: { children: JSX.Element }): JSX.Element {
 }
 
 function RedirectIfAuthenticated({ children }: { children: JSX.Element }): JSX.Element {
-  const token = localStorage.getItem('token')
+  const { isAuthenticated, loading } = useAuth()
 
-  if (token) {
+  if (loading) {
+    return <div className="min-h-screen bg-[#0b0a09]" />
+  }
+
+  if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />
   }
 
@@ -30,52 +39,54 @@ function RedirectIfAuthenticated({ children }: { children: JSX.Element }): JSX.E
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
 
-        {/* Auth Pages - No Layout */}
-        <Route
-          path="/login"
-          element={
-            <RedirectIfAuthenticated>
-              <LoginPage />
-            </RedirectIfAuthenticated>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <RedirectIfAuthenticated>
-              <RegisterPage />
-            </RedirectIfAuthenticated>
-          }
-        />
+          {/* Auth Pages - No Layout */}
+          <Route
+            path="/login"
+            element={
+              <RedirectIfAuthenticated>
+                <LoginPage />
+              </RedirectIfAuthenticated>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <RedirectIfAuthenticated>
+                <RegisterPage />
+              </RedirectIfAuthenticated>
+            }
+          />
 
-        {/* Protected Routes - With Layout */}
-        <Route
-          path="/dashboard"
-          element={
-            <RequireAuth>
-              <Layout>
-                <Dashboard />
-              </Layout>
-            </RequireAuth>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <RequireAuth>
-              <Layout>
-                <ProfilePage />
-              </Layout>
-            </RequireAuth>
-          }
-        />
+          {/* Protected Routes - With Layout */}
+          <Route
+            path="/dashboard"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <Dashboard />
+                </Layout>
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <RequireAuth>
+                <Layout>
+                  <ProfilePage />
+                </Layout>
+              </RequireAuth>
+            }
+          />
 
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Catch all - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

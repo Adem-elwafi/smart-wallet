@@ -1,18 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { Bell, LogOut, Search, Sun, Moon, Wallet, User } from 'lucide-react'
-import { useEffect, useState } from 'react'
-import api from '../api/axiosConfig'
-import type { Profile } from '../api/types'
+import { Bell, LogOut, Search, Sun, Moon, Wallet } from 'lucide-react'
+import { useState } from 'react'
+import { useAuth } from '../context/AuthContext'
 
 function Navbar() {
   const navigate = useNavigate()
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [isLightMode, setIsLightMode] = useState(false)
-
-  // Initialize theme from HTML element on mount
-  useEffect(() => {
-    setIsLightMode(document.documentElement.classList.contains('light-theme'))
-  }, [])
+  const { logout, user } = useAuth()
+  const [isLightMode, setIsLightMode] = useState(() =>
+    typeof document !== 'undefined' && document.documentElement.classList.contains('light-theme'),
+  )
 
   const toggleTheme = () => {
     const html = document.documentElement
@@ -25,34 +21,13 @@ function Navbar() {
     }
   }
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await api.get<Profile>('/v1/profile/me')
-        setProfile(response.data)
-      } catch (err) {
-        console.error("Failed to fetch profile in navbar", err)
-      }
-    }
-    fetchProfile()
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    navigate('/login', { replace: true })
-  }
-
-  const handleLogoClick = () => {
-    navigate('/dashboard')
-  }
-
   const getInitials = () => {
-    if (profile?.fullName) {
-      const parts = profile.fullName.split(' ').filter(Boolean)
+    if (user?.fullName) {
+      const parts = user.fullName.split(' ').filter(Boolean)
       if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase()
       return parts[0].substring(0, 2).toUpperCase()
     }
-    if (profile?.username) return profile.username.substring(0, 2).toUpperCase()
+    if (user?.username) return user.username.substring(0, 2).toUpperCase()
     return 'US'
   }
 
@@ -108,20 +83,20 @@ function Navbar() {
             onClick={() => navigate('/profile')}
             className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 p-1 pr-4 transition-all hover:bg-white/10 hover:border-white/20"
           >
-            {profile?.avatarUrl ? (
-              <img src={profile.avatarUrl} alt="Avatar" className="h-8 w-8 rounded-full object-cover border border-white/20" />
+            {user?.avatarUrl ? (
+              <img src={user.avatarUrl} alt="Avatar" className="h-8 w-8 rounded-full object-cover border border-white/20" />
             ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-amber-200 to-amber-500 shadow-inner">
-                <User className="h-4 w-4 text-zinc-950" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-linear-to-br from-amber-200 to-amber-500 text-xs font-bold text-zinc-950 shadow-inner">
+                {getInitials()}
               </div>
             )}
             <span className="hidden text-sm font-medium text-white/90 sm:block">
-              {profile?.fullName?.split(' ')[0] || profile?.username || 'Profil'}
+              {user?.fullName?.split(' ')[0] || user?.username || 'Profil'}
             </span>
           </button>
 
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="hidden items-center gap-2 rounded-full border border-rose-500/20 bg-rose-500/10 px-4 py-2 text-sm font-medium text-rose-300 transition hover:bg-rose-500 hover:text-white md:flex"
           >
             <LogOut className="h-4 w-4" />
