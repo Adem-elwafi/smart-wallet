@@ -9,6 +9,7 @@ type AuthContextValue = {
   wallet: WalletResponse | null
   isAuthenticated: boolean
   loading: boolean
+  loginSuccess: (token: string) => Promise<void>
   refreshUserData: () => Promise<void>
   logout: () => void
 }
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
     setWallet(null)
     setIsAuthenticated(false)
+    delete api.defaults.headers.common.Authorization
   }, [])
 
   const logout = useCallback(() => {
@@ -34,6 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false)
     navigate('/login', { replace: true })
   }, [clearSession, navigate])
+
+  const applyToken = useCallback((token: string) => {
+    localStorage.setItem('token', token)
+    api.defaults.headers.common.Authorization = `Bearer ${token}`
+  }, [])
 
   const refreshUserData = useCallback(async () => {
     const token = localStorage.getItem('token')
@@ -47,13 +54,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true)
 
     try {
-      const [profileResponse, walletResponse] = await Promise.all([
+      const [profileResult, walletResult] = await Promise.allSettled([
         api.get<Profile>('/v1/profile/me'),
         api.get<WalletResponse>('/wallet/me'),
       ])
 
-      setUser(profileResponse.data)
-      setWallet(walletResponse.data)
+      if (profileResult.status === 'fulfilled') {
+        setUser(profileResult.value.data)
+      }
+
+      if (walletResult.status === 'fulfilled') {
+        setWallet(walletResult.value.data)
+      }
+
+      const profileRejected = profileResult.status === 'rejected'
+      const walletRejected = walletResult.status === 'rejected'
+
+      if (profileRejected || walletRejected) {
+        const rejection = profileRejected ? profileResult.reason : walletResult.reason
+        if (axios.isAxiosError(rejection) && rejection.response?.status === 401) {
+          localStorage.removeItem('token')
+          clearSession()
+          return
+        }
+      }
+
       setIsAuthenticated(true)
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -61,11 +86,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       clearSession()
-      throw error
     } finally {
       setLoading(false)
     }
   }, [clearSession])
+
+  const loginSuccess = useCallback(async (token: string) => {
+    applyToken(token)
+    setIsAuthenticated(true)
+
+    try {
+      await refreshUserData()
+    } catch {
+      // Keep the authenticated state if one bootstrap call races/fails during login.
+      setIsAuthenticated(true)
+    }
+  }, [applyToken, refreshUserData])
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -85,10 +121,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       wallet,
       isAuthenticated,
       loading,
+      loginSuccess,
       refreshUserData,
       logout,
     }),
-    [user, wallet, isAuthenticated, loading, refreshUserData, logout],
+    [user, wallet, isAuthenticated, loading, loginSuccess, refreshUserData, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

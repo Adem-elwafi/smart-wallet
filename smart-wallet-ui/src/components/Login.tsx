@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext'
 
 function Login() {
     const navigate = useNavigate()
-    const { refreshUserData } = useAuth()
+    const { loginSuccess } = useAuth()
     const [credentials, setCredentials] = useState({ username: '', password: '' })
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -19,8 +19,7 @@ function Login() {
 
         try {
             const response = await api.post<AuthResponse>('/v1/auth/authenticate', credentials)
-            localStorage.setItem('token', response.data.token)
-            await refreshUserData()
+            await loginSuccess(response.data.token)
             navigate('/dashboard')
         } catch (requestError) {
             console.error('Erreur de connexion', requestError)
