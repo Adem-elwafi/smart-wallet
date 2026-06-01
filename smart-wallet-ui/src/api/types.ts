@@ -26,14 +26,23 @@ export interface TransferRequest {
     description: string;
 }
 
+export type TransactionCategory = 'ALIMENTATION' | 'TRANSPORT' | 'LOISIRS' | 'SHOPPING' | 'REVENUS' | 'AUTRE';
+
+export interface ExpenseRequest {
+    amount: number;
+    category: TransactionCategory;
+    description: string;
+}
+
 export interface TransactionResponse {
     id: number;
     amount: number;
     timestamp: string;
     type: string;
+    category?: string | null;
     description: string;
     senderAccountNumber: string;
-    recipientAccountNumber: string;
+    recipientAccountNumber: string | null;
 }
 
 export interface ApiError {

@@ -1,11 +1,19 @@
 import axiosInstance from '../api/axiosConfig';
-import type { TransactionResponse, TransferRequest } from '../api/types';
+import type { ExpenseRequest, TransactionResponse, TransferRequest } from '../api/types';
 
 /**
  * Initiate a transfer between wallets
  */
 export const initiateTransfer = async (transferRequest: TransferRequest): Promise<TransactionResponse> => {
   const response = await axiosInstance.post('/v1/transactions/transfer', transferRequest);
+  return response.data;
+};
+
+/**
+ * Register a personal expense for the logged-in user
+ */
+export const createExpense = async (expenseRequest: ExpenseRequest): Promise<TransactionResponse> => {
+  const response = await axiosInstance.post('/v1/transactions/expense', expenseRequest);
   return response.data;
 };
 

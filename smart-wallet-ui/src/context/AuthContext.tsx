@@ -67,16 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setWallet(walletResult.value.data)
       }
 
-      const profileRejected = profileResult.status === 'rejected'
-      const walletRejected = walletResult.status === 'rejected'
+      const rejectedReasons = [profileResult, walletResult]
+        .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
+        .map((result) => result.reason)
 
-      if (profileRejected || walletRejected) {
-        const rejection = profileRejected ? profileResult.reason : walletResult.reason
-        if (axios.isAxiosError(rejection) && rejection.response?.status === 401) {
-          localStorage.removeItem('token')
-          clearSession()
-          return
-        }
+      if (rejectedReasons.some((rejection) => axios.isAxiosError(rejection) && rejection.response?.status === 401)) {
+        localStorage.removeItem('token')
+        clearSession()
+        return
       }
 
       setIsAuthenticated(true)

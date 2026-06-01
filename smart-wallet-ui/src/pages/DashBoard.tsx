@@ -19,12 +19,12 @@ import { useAuth } from '../context/AuthContext'
 
 function DashboardPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
-  const [loading, setLoading] = useState(true)
+  const [txLoading, setTxLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const { user, wallet, loading: authLoading, logout } = useAuth()
+  const { user, wallet, loading: sessionLoading, logout } = useAuth()
 
   const loadData = useCallback(async () => {
-    setLoading(true)
+    setTxLoading(true)
     setError(null)
 
     try {
@@ -42,7 +42,7 @@ function DashboardPage() {
         setError('Une erreur inattendue est survenue.')
       }
     } finally {
-      setLoading(false)
+      setTxLoading(false)
     }
   }, [logout])
 
@@ -76,7 +76,7 @@ function DashboardPage() {
     { title: 'Économies', value: savings, trend: 8, icon: PieChart, color: 'text-amber-300' }
   ]
 
-  if (authLoading || (loading && !wallet)) {
+  if (sessionLoading || (txLoading && transactions.length === 0)) {
     return (
       <div className="flex h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(6,182,212,0.08),transparent_35%),linear-gradient(180deg,#090807_0%,#0b0a09_100%)] text-amber-200">
         <div className="flex flex-col items-center gap-4">
