@@ -31,7 +31,7 @@ function FloatingInput({
       {/* Glow ring on focus */}
       <div
         className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none
-          bg-gradient-to-r from-cyan-500/20 to-indigo-500/20 blur-sm
+          bg-linear-to-r from-cyan-500/20 to-indigo-500/20 blur-sm
           ${focused ? 'opacity-100' : 'opacity-0'}`}
       />
 
@@ -116,14 +116,14 @@ function Avatar({ initials, avatarUrl }: AvatarProps) {
       {/* Outer pulse ring */}
       <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping [animation-duration:3s]" />
       {/* Glow halo */}
-      <div className="absolute inset-[-4px] rounded-full bg-gradient-to-br from-cyan-500/30 via-indigo-500/20 to-violet-500/30 blur-md" />
+      <div className="absolute -inset-1 rounded-full bg-linear-to-br from-cyan-500/30 via-indigo-500/20 to-violet-500/30 blur-md" />
       {/* Ring */}
       <div className="relative rounded-full ring-4 ring-cyan-500/30 ring-offset-2 ring-offset-[#0a0f1e] overflow-hidden">
         {/* Avatar circle */}
         {avatarUrl ? (
           <img src={avatarUrl} alt="Avatar" className="w-24 h-24 rounded-full object-cover" />
         ) : (
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-cyan-950 to-indigo-950 border border-white/10 flex items-center justify-center">
+          <div className="w-24 h-24 rounded-full bg-linear-to-br from-cyan-950 to-indigo-950 border border-white/10 flex items-center justify-center">
             <span className="text-2xl font-extralight tracking-widest text-white/90 select-none">
               {initials}
             </span>
@@ -138,11 +138,11 @@ function Avatar({ initials, avatarUrl }: AvatarProps) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3 mb-5">
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="h-px flex-1 bg-linear-to-r from-transparent via-white/10 to-transparent" />
       <span className="text-[10px] tracking-[0.2em] uppercase font-light text-white/30">
         {children}
       </span>
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="h-px flex-1 bg-linear-to-r from-transparent via-white/10 to-transparent" />
     </div>
   )
 }
@@ -261,13 +261,13 @@ export default function ProfilePage() {
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/4 -left-1/4 w-[60vw] h-[60vw] rounded-full
-          bg-gradient-to-br from-indigo-900/50 to-transparent blur-[120px]
+          bg-linear-to-br from-indigo-900/50 to-transparent blur-[120px]
           animate-[drift_18s_ease-in-out_infinite_alternate]" />
         <div className="absolute -bottom-1/4 -right-1/4 w-[55vw] h-[55vw] rounded-full
-          bg-gradient-to-tl from-cyan-900/40 to-transparent blur-[100px]
+          bg-linear-to-tl from-cyan-900/40 to-transparent blur-[100px]
           animate-[drift_22s_ease-in-out_infinite_alternate-reverse]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vw] rounded-full
-          bg-gradient-to-br from-violet-900/25 to-transparent blur-[140px]
+          bg-linear-to-br from-violet-900/25 to-transparent blur-[140px]
           animate-[drift_15s_ease-in-out_infinite_alternate]" />
         {/* Grid overlay */}
         <div className="absolute inset-0 opacity-[0.04]"
@@ -282,17 +282,17 @@ export default function ProfilePage() {
       {/* ── Main card ── */}
       <div className="relative w-full max-w-2xl">
         {/* Card glow */}
-        <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-cyan-500/10 via-indigo-500/5 to-violet-500/10 blur-2xl scale-105" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-cyan-500/10 via-indigo-500/5 to-violet-500/10 blur-2xl scale-105" />
 
-        <div className="relative rounded-3xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-2xl overflow-hidden shadow-2xl">
+        <div className="relative rounded-3xl border border-white/8 bg-white/3 backdrop-blur-2xl overflow-hidden shadow-2xl">
 
           {/* Top edge shine */}
-          <div className="absolute top-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+          <div className="absolute top-0 inset-x-8 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
 
           {/* ── Hero header ── */}
           <div className="relative px-8 pt-12 pb-8 flex flex-col items-center text-center overflow-hidden">
             {/* Header background tint */}
-            <div className="absolute inset-0 bg-gradient-to-b from-cyan-950/30 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-cyan-950/30 to-transparent pointer-events-none" />
 
             <div className="relative group cursor-pointer rounded-full">
               <Avatar initials={getInitials()} avatarUrl={formData.avatarUrl} />
@@ -326,7 +326,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Decorative accent line */}
-            <div className="mt-6 w-16 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
+            <div className="mt-6 w-16 h-px bg-linear-to-r from-transparent via-cyan-500/50 to-transparent" />
           </div>
 
           {/* ── Form ── */}
@@ -343,7 +343,7 @@ export default function ProfilePage() {
                 <FloatingInput
                   id="fullName"
                   label="Nom complet"
-                  value={formData.fullName}
+                  value={formData.fullName ?? ''}
                   onChange={handleChange}
                   autoComplete="name"
                   disabled={saving}
@@ -359,7 +359,7 @@ export default function ProfilePage() {
                   id="email"
                   label="Adresse e-mail"
                   type="email"
-                  value={formData.email}
+                  value={formData.email ?? ''}
                   onChange={handleChange}
                   autoComplete="email"
                   disabled={saving}
@@ -382,7 +382,7 @@ export default function ProfilePage() {
                 "
               >
                 {/* Button gradient background */}
-                <span className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-indigo-600 to-violet-600
+                <span className="absolute inset-0 bg-linear-to-r from-cyan-600 via-indigo-600 to-violet-600
                   group-hover:from-cyan-500 group-hover:via-indigo-500 group-hover:to-violet-500
                   transition-all duration-300" />
 
@@ -391,12 +391,12 @@ export default function ProfilePage() {
                   shadow-[0_0_30px_rgba(6,182,212,0.35)] transition-opacity duration-300" />
 
                 {/* Shimmer sweep */}
-                <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%]
-                  bg-gradient-to-r from-transparent via-white/15 to-transparent
+                <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full
+                  bg-linear-to-r from-transparent via-white/15 to-transparent
                   transition-transform duration-700 ease-in-out" />
 
                 {/* Top highlight */}
-                <span className="absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+                <span className="absolute top-0 inset-x-4 h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
 
                 {/* Label */}
                 <span className="relative flex items-center justify-center gap-2">
@@ -425,7 +425,7 @@ export default function ProfilePage() {
           </form>
 
           {/* Bottom edge shine */}
-          <div className="absolute bottom-0 inset-x-8 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+          <div className="absolute bottom-0 inset-x-8 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
         </div>
 
         {/* Bottom badge */}

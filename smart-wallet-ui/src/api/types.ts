@@ -45,6 +45,20 @@ export interface TransactionResponse {
     recipientAccountNumber: string | null;
 }
 
+export interface DashboardStatsResponse {
+    totalRevenues: number;
+    totalExpenses: number;
+    totalSavings: number;
+    revenuesTrend: number;
+    expensesTrend: number;
+    savingsTrend: number;
+}
+
+export interface ChartDataPoint {
+    label: string;
+    amount: number;
+}
+
 export interface ApiError {
     message: string;
 }

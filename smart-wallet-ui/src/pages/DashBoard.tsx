@@ -1,8 +1,6 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
-  ArrowDownLeft,
   ArrowRightLeft,
-  ArrowUpRight,
   CreditCard,
   Copy,
   History,
@@ -14,13 +12,19 @@ import axios from 'axios'
 import TransactionsList from '../components/TransactionsList'
 import TransferForm from '../components/TransferForm'
 import { getTransactionHistory } from '../services/transaction.service'
-import type { TransactionResponse } from '../api/types'
+import StatCard from '../components/StatCard'
+import { getDashboardChart, getDashboardStats } from '../services/analytics.service'
+import type { ChartDataPoint, DashboardStatsResponse, TransactionResponse } from '../api/types'
 import { useAuth } from '../context/AuthContext'
 
 function DashboardPage() {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([])
   const [txLoading, setTxLoading] = useState(true)
+  const [analyticsLoading, setAnalyticsLoading] = useState(true)
+  const [dashboardStats, setDashboardStats] = useState<DashboardStatsResponse | null>(null)
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [analyticsError, setAnalyticsError] = useState<string | null>(null)
   const { user, wallet, loading: sessionLoading, logout } = useAuth()
 
   const loadData = useCallback(async () => {
@@ -52,29 +56,118 @@ function DashboardPage() {
     })
   }, [loadData])
 
+  const loadAnalytics = useCallback(async () => {
+    setAnalyticsLoading(true)
+    setAnalyticsError(null)
+
+    try {
+      const [statsData, chartSeries] = await Promise.all([
+        getDashboardStats(),
+        getDashboardChart(),
+      ])
+
+      setDashboardStats(statsData)
+      setChartData(chartSeries)
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        logout()
+        return
+      }
+
+      setAnalyticsError('Impossible de charger les analyses financières.')
+    } finally {
+      setAnalyticsLoading(false)
+    }
+  }, [logout])
+
+  useEffect(() => {
+    queueMicrotask(() => {
+      void loadAnalytics()
+    })
+  }, [loadAnalytics])
+
   const copyAccountNumber = () => {
     if (wallet?.accountNumber) {
       navigator.clipboard.writeText(wallet.accountNumber)
     }
   }
 
-  const accountNumber = wallet?.accountNumber ?? ''
+  const currencyFormatter = useMemo(
+    () => new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+    [],
+  )
 
-  const monthlyIncomes = transactions
-    .filter((tx) => (accountNumber ? tx.recipientAccountNumber === accountNumber : tx.type === 'CREDIT'))
-    .reduce((acc, tx) => acc + tx.amount, 0)
+  const formatMoney = (value: number) => `${currencyFormatter.format(value)} €`
 
-  const monthlyExpenses = transactions
-    .filter((tx) => (accountNumber ? tx.senderAccountNumber === accountNumber : tx.type === 'DEBIT'))
-    .reduce((acc, tx) => acc + tx.amount, 0)
+  const chartPath = useMemo(() => {
+    if (chartData.length === 0) {
+      return ''
+    }
 
-  const savings = monthlyIncomes - monthlyExpenses
+    const width = 1000
+    const height = 300
+    const paddingX = 48
+    const paddingY = 24
+    const values = chartData.map((point) => Number(point.amount))
+    const minValue = Math.min(...values)
+    const maxValue = Math.max(...values)
+    const range = Math.max(maxValue - minValue, 1)
+    const usableWidth = width - paddingX * 2
+    const usableHeight = height - paddingY * 2
 
-  const stats = [
-    { title: 'Revenus ce mois', value: monthlyIncomes, trend: 12, icon: TrendingUp, color: 'text-emerald-300' },
-    { title: 'Dépenses', value: monthlyExpenses, trend: -5, icon: TrendingDown, color: 'text-rose-300' },
-    { title: 'Économies', value: savings, trend: 8, icon: PieChart, color: 'text-amber-300' }
-  ]
+    const points = chartData.map((point, index) => {
+      const amount = Number(point.amount)
+      const x = chartData.length === 1 ? width / 2 : paddingX + (usableWidth * index) / (chartData.length - 1)
+      const normalized = (amount - minValue) / range
+      const y = paddingY + (1 - normalized) * usableHeight
+      return { x, y }
+    })
+
+    return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' ')
+  }, [chartData])
+
+  const chartAreaPath = useMemo(() => {
+    if (chartData.length === 0) {
+      return ''
+    }
+
+    const width = 1000
+    const height = 300
+    const paddingX = 48
+    const paddingY = 24
+    const values = chartData.map((point) => Number(point.amount))
+    const minValue = Math.min(...values)
+    const maxValue = Math.max(...values)
+    const range = Math.max(maxValue - minValue, 1)
+    const usableWidth = width - paddingX * 2
+    const usableHeight = height - paddingY * 2
+
+    const points = chartData.map((point, index) => {
+      const amount = Number(point.amount)
+      const x = chartData.length === 1 ? width / 2 : paddingX + (usableWidth * index) / (chartData.length - 1)
+      const normalized = (amount - minValue) / range
+      const y = paddingY + (1 - normalized) * usableHeight
+      return { x, y }
+    })
+
+    const first = points[0]
+    const last = points[points.length - 1]
+
+    return `M ${first.x.toFixed(2)} 300 L ${points.map((point) => `${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(' L ')} L ${last.x.toFixed(2)} 300 Z`
+  }, [chartData])
+
+  const revenueTrendData = chartData.map((point) => Number(point.amount))
+  const expensesTrendData = chartData.map((point, index) => Math.max(0, chartData.length - index) + Number(point.amount) * 0.15)
+  const savingsTrendData = chartData.map((point, index) => Number(point.amount) - (index * 4))
+
+  const stats = dashboardStats ?? {
+    totalRevenues: 0,
+    totalExpenses: 0,
+    totalSavings: 0,
+    revenuesTrend: 0,
+    expensesTrend: 0,
+    savingsTrend: 0,
+  }
 
   if (sessionLoading || (txLoading && transactions.length === 0)) {
     return (
@@ -93,9 +186,9 @@ function DashboardPage() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-linear-to-b from-black/40 to-transparent" />
 
       <div className="relative mx-auto w-full max-w-7xl px-4 pb-12 pt-4 sm:px-6 lg:px-8 lg:pt-6">
-        {error && (
+        {(error || analyticsError) && (
           <div className="mb-8 rounded-2xl border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-            {error}
+            {error || analyticsError}
           </div>
         )}
 
@@ -171,21 +264,46 @@ function DashboardPage() {
               </article>
 
               <section className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {stats.map((stat) => (
-                  <div key={stat.title} className="rounded-3xl border border-white/5 bg-zinc-900/40 p-6 shadow-[0_18px_60px_-35px_rgba(0,0,0,0.85)] backdrop-blur-md transition-transform duration-300 hover:-translate-y-1">
-                    <div className="mb-4 flex items-start justify-between">
-                      <div className="rounded-2xl bg-white/5 p-3">
-                        <stat.icon className={`h-5 w-5 ${stat.color}`} />
-                      </div>
-                      <div className={`flex items-center gap-1 text-xs font-bold ${stat.trend > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        {stat.trend > 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownLeft className="h-3 w-3" />}
-                        {Math.abs(stat.trend)}%
-                      </div>
+                {analyticsLoading && !dashboardStats ? (
+                  [0, 1, 2].map((index) => (
+                    <div
+                      key={index}
+                      className="h-56 animate-pulse rounded-3xl border border-white/5 bg-zinc-900/40 p-6 shadow-[0_18px_60px_-35px_rgba(0,0,0,0.85)] backdrop-blur-md"
+                    >
+                      <div className="mb-4 h-10 w-10 rounded-2xl bg-white/5" />
+                      <div className="mb-3 h-3 w-24 rounded-full bg-white/5" />
+                      <div className="mb-8 h-8 w-36 rounded-full bg-white/5" />
+                      <div className="h-10 rounded-full bg-white/5" />
                     </div>
-                    <p className="mb-1 text-xs font-bold uppercase tracking-[0.3em] text-zinc-500">{stat.title}</p>
-                    <p className="text-2xl font-bold text-zinc-100">{stat.value.toLocaleString('fr-FR')} €</p>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <>
+                    <StatCard
+                      title="Revenus ce mois"
+                      value={formatMoney(stats.totalRevenues)}
+                      trend={stats.revenuesTrend}
+                      data={revenueTrendData}
+                      delay="0.05s"
+                      icon={TrendingUp}
+                    />
+                    <StatCard
+                      title="Dépenses"
+                      value={formatMoney(stats.totalExpenses)}
+                      trend={stats.expensesTrend}
+                      data={expensesTrendData}
+                      delay="0.1s"
+                      icon={TrendingDown}
+                    />
+                    <StatCard
+                      title="Économies"
+                      value={formatMoney(stats.totalSavings)}
+                      trend={stats.savingsTrend}
+                      data={savingsTrendData}
+                      delay="0.15s"
+                      icon={PieChart}
+                    />
+                  </>
+                )}
               </section>
 
               <section className="rounded-4xl border border-white/5 bg-zinc-900/40 p-8 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.9)] backdrop-blur-md sm:p-10">
@@ -225,29 +343,40 @@ function DashboardPage() {
                       <line key={y} x1="0" y1={y} x2="1000" y2={y} stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
                     ))}
 
-                    <path d="M0 300 L0 220 Q 100 200, 200 240 T 400 180 T 600 220 T 800 150 T 1000 180 L 1000 300 Z" fill="url(#chartGradient)" className="animate-pulse duration-4000" />
+                    {chartAreaPath && (
+                      <path d={chartAreaPath} fill="url(#chartGradient)" className="animate-pulse duration-4000" />
+                    )}
 
-                    <path
-                      d="M0 220 Q 100 200, 200 240 T 400 180 T 600 220 T 800 150 T 1000 180"
-                      fill="none"
-                      stroke="#f59e0b"
-                      strokeWidth="4"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      filter="url(#glow)"
-                    />
+                    {chartPath && (
+                      <path
+                        d={chartPath}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        filter="url(#glow)"
+                      />
+                    )}
 
-                    {[200, 400, 600, 800].map((x, index) => (
+                    {chartData.length > 0 && (
                       <circle
-                        key={x}
-                        cx={x}
-                        cy={[240, 180, 220, 150][index]}
+                        cx={chartData.length === 1 ? 500 : 1000 - 48}
+                        cy={(() => {
+                          const amount = Number(chartData[chartData.length - 1].amount)
+                          const values = chartData.map((point) => Number(point.amount))
+                          const minValue = Math.min(...values)
+                          const maxValue = Math.max(...values)
+                          const range = Math.max(maxValue - minValue, 1)
+                          const normalized = (amount - minValue) / range
+                          return 24 + (1 - normalized) * 252
+                        })()}
                         r="6"
                         fill="#f59e0b"
                         className="animate-bounce"
-                        style={{ animationDelay: `${index * 0.5}s`, animationDuration: '3s' }}
+                        style={{ animationDuration: '3s' }}
                       />
-                    ))}
+                    )}
                   </svg>
                 </div>
 
