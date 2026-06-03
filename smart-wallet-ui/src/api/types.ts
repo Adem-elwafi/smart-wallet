@@ -34,6 +34,10 @@ export interface ExpenseRequest {
     description: string;
 }
 
+export interface DepositRequest {
+    amount: number;
+}
+
 export interface TransactionResponse {
     id: number;
     amount: number;

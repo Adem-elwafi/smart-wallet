@@ -38,8 +38,8 @@ public class Transaction {
     @Column(length = 255)
     private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_wallet_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "sender_wallet_id", nullable = true)
     private Wallet senderWallet;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)

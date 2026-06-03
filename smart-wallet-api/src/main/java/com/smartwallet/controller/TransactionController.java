@@ -1,6 +1,7 @@
 package com.smartwallet.controller;
 
 import com.smartwallet.dto.ExpenseRequest;
+import com.smartwallet.dto.DepositRequest;
 import com.smartwallet.dto.TransactionResponse;
 import com.smartwallet.dto.TransferRequest;
 import com.smartwallet.exception.InsufficientBalanceException;
@@ -109,6 +110,28 @@ public class TransactionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponse("Expense creation failed: " + e.getMessage()));
+        }
+    }
+
+    /**
+     * Effectue un dépôt sur le wallet de l'utilisateur connecté
+     */
+    @PostMapping("/deposit")
+    public ResponseEntity<?> createDeposit(Authentication authentication, @RequestBody DepositRequest depositRequest) {
+        try {
+            TransactionResponse response = walletService.deposit(
+                    authentication.getName(),
+                    depositRequest.amount()
+            );
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(e.getMessage()));
+        } catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ErrorResponse("User not found: " + e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("Deposit failed: " + e.getMessage()));
         }
     }
 

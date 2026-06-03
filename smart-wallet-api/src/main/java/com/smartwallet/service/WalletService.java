@@ -1,6 +1,7 @@
 package com.smartwallet.service;
 
 import com.smartwallet.dto.TransactionResponse;
+import com.smartwallet.dto.DepositRequest;
 import com.smartwallet.exception.InsufficientBalanceException;
 import com.smartwallet.model.TransactionCategory;
 import com.smartwallet.dto.TransferRequest;
@@ -157,6 +158,36 @@ public class WalletService {
         Transaction savedExpense = transactionRepository.save(expenseTransaction);
 
         return TransactionResponse.fromEntity(savedExpense);
+    }
+
+    @Transactional
+    public TransactionResponse deposit(String username, BigDecimal amount) {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Deposit amount must be greater than zero");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        Wallet wallet = walletRepository.findByUserId(user.getId())
+                .orElseThrow(() -> new RuntimeException("Wallet not found for this user"));
+
+        wallet.setBalance(wallet.getBalance().add(amount));
+        walletRepository.save(wallet);
+
+        Transaction depositTransaction = Transaction.builder()
+                .amount(amount)
+                .timestamp(LocalDateTime.now())
+                .type(Transaction.TransactionType.CREDIT)
+                .category(TransactionCategory.REVENUS)
+                .description("Dépôt d'argent")
+                .senderWallet(null)
+                .receiverWallet(wallet)
+                .build();
+
+        Transaction savedDeposit = transactionRepository.save(depositTransaction);
+
+        return TransactionResponse.fromEntity(savedDeposit);
     }
 
 }
