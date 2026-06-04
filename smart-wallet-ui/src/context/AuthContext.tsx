@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const [profileResult, walletResult] = await Promise.allSettled([
         api.get<Profile>('/v1/profile/me'),
-        api.get<WalletResponse>('/wallet/me'),
+        api.get<WalletResponse>('/v1/wallet/me'),
       ])
 
       if (profileResult.status === 'fulfilled') {

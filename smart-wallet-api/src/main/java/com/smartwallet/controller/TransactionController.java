@@ -90,9 +90,13 @@ public class TransactionController {
      * Enregistre une dépense catégorisée pour l'utilisateur connecté
      */
     @PostMapping("/expense")
-    public ResponseEntity<?> createExpense(@RequestBody ExpenseRequest expenseRequest) {
+    public ResponseEntity<?> createExpense(Authentication authentication, @RequestBody ExpenseRequest expenseRequest) {
         try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || authentication.getName() == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Unauthorized"));
+            }
+
             TransactionResponse response = walletService.createExpense(
                     authentication.getName(),
                     expenseRequest.amount(),

@@ -196,13 +196,13 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
       <div className={`pointer-events-none absolute inset-0 -z-10 rounded-4xl bg-amber-400/10 blur-[60px] transition-opacity duration-700 ${successMessage ? 'opacity-100' : 'opacity-0'}`} />
 
       <div className="mb-6 rounded-2xl border border-white/10 bg-black/40 p-1">
-        <div className="flex gap-2">
+        <div className="grid w-full grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => switchMode('transfer')}
-            className={`${tabBase} ${mode === 'transfer' ? tabActive : tabInactive}`}
+            className={`${tabBase} min-w-0 ${mode === 'transfer' ? tabActive : tabInactive}`}
           >
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 truncate">
               <ArrowLeftRight className="h-4 w-4" />
               Transfert P2P
             </span>
@@ -210,9 +210,9 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
           <button
             type="button"
             onClick={() => switchMode('expense')}
-            className={`${tabBase} ${mode === 'expense' ? tabActive : tabInactive}`}
+            className={`${tabBase} min-w-0 ${mode === 'expense' ? tabActive : tabInactive}`}
           >
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 truncate">
               <ReceiptText className="h-4 w-4" />
               Dépense Personnelle
             </span>
@@ -220,9 +220,9 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
           <button
             type="button"
             onClick={() => switchMode('deposit')}
-            className={`${tabBase} ${mode === 'deposit' ? tabActive : tabInactive}`}
+            className={`${tabBase} min-w-0 ${mode === 'deposit' ? tabActive : tabInactive}`}
           >
-            <span className="inline-flex items-center gap-2">
+            <span className="inline-flex items-center gap-2 truncate">
               <CircleDollarSign className="h-4 w-4" />
               Dépôt
             </span>
