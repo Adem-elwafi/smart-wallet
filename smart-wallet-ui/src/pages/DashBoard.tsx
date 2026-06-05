@@ -7,6 +7,7 @@ import {
   PieChart,
   TrendingDown,
   TrendingUp,
+  X,
 } from 'lucide-react'
 import axios from 'axios'
 import TransactionsList from '../components/TransactionsList'
@@ -25,6 +26,7 @@ function DashboardPage() {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([])
   const [error, setError] = useState<string | null>(null)
   const [analyticsError, setAnalyticsError] = useState<string | null>(null)
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false)
   const { user, wallet, loading: sessionLoading, logout } = useAuth()
 
   const loadData = useCallback(async () => {
@@ -441,11 +443,14 @@ function DashboardPage() {
                   <History className="h-5 w-5 text-amber-300" />
                   Flux Récents
                 </h3>
-                <button className="text-xs font-bold uppercase tracking-[0.3em] text-amber-200 transition-colors hover:text-amber-100">
+                <button 
+                  onClick={() => setIsHistoryModalOpen(true)}
+                  className="text-xs font-bold uppercase tracking-[0.3em] text-amber-200 transition-colors hover:text-amber-100"
+                >
                   Tout voir
                 </button>
               </div>
-              <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
+              <TransactionsList transactions={transactions.slice(0, 4)} currentAccountNumber={wallet?.accountNumber} />
             </section>
 
             <section className="overflow-hidden rounded-4xl border border-amber-300/20 bg-linear-to-br from-[#161514] to-black p-8 shadow-[0_24px_80px_-40px_rgba(0,0,0,0.9)]">
@@ -461,6 +466,26 @@ function DashboardPage() {
           </aside>
         </main>
       </div>
+
+      {isHistoryModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-lg p-4">
+          <div className="glass relative max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-white/10 p-6 shadow-2xl">
+            <div className="sticky top-0 z-10 mb-8 flex items-center justify-between bg-zinc-900/40 py-2 backdrop-blur-xl">
+              <h3 className="flex items-center gap-2 text-2xl font-bold text-zinc-100">
+                <History className="h-6 w-6 text-amber-300" />
+                Historique Complet
+              </h3>
+              <button
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="rounded-xl bg-white/5 p-2 transition-colors hover:bg-white/10"
+              >
+                <X className="h-6 w-6 text-zinc-400" />
+              </button>
+            </div>
+            <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

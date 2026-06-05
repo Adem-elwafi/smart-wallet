@@ -54,10 +54,6 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
 
   const remainingBalance = useMemo(() => availableBalance - formData.amount, [availableBalance, formData.amount])
 
-  const tabBase = 'flex-1 rounded-full px-2 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-300 min-w-0 overflow-hidden'
-  const tabActive = 'border border-amber-300/20 bg-[linear-gradient(135deg,rgba(245,158,11,0.2),rgba(202,138,4,0.16))] text-amber-100 shadow-[0_0_30px_rgba(245,158,11,0.12)]'
-  const tabInactive = 'border border-white/10 bg-white/5 text-zinc-400 hover:border-white/20 hover:bg-white/8 hover:text-zinc-100'
-
   const resetFeedback = () => {
     if (successMessage) setSuccessMessage('')
     if (errorMessage) setErrorMessage('')
@@ -195,39 +191,43 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
     <div className={`relative transition-all duration-500 ${successMessage ? 'scale-[1.01]' : ''}`}>
       <div className={`pointer-events-none absolute inset-0 -z-10 rounded-4xl bg-amber-400/10 blur-[60px] transition-opacity duration-700 ${successMessage ? 'opacity-100' : 'opacity-0'}`} />
 
-      <div className="mb-6 rounded-2xl border border-white/10 bg-black/40 p-1">
-        <div className="grid w-full grid-cols-3 gap-1 sm:gap-2">
-          <button
-            type="button"
-            onClick={() => switchMode('transfer')}
-            className={`${tabBase} ${mode === 'transfer' ? tabActive : tabInactive}`}
-          >
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 truncate">
-              <ArrowLeftRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Transfert P2P</span>
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => switchMode('expense')}
-            className={`${tabBase} ${mode === 'expense' ? tabActive : tabInactive}`}
-          >
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 truncate">
-              <ReceiptText className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Dépense</span>
-            </span>
-          </button>
-          <button
-            type="button"
-            onClick={() => switchMode('deposit')}
-            className={`${tabBase} ${mode === 'deposit' ? tabActive : tabInactive}`}
-          >
-            <span className="inline-flex items-center gap-1.5 sm:gap-2 truncate">
-              <CircleDollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="truncate">Dépôt</span>
-            </span>
-          </button>
-        </div>
+      <div className="mb-6 flex w-full items-center gap-1.5 p-1 bg-black/40 border border-white/5 rounded-2xl">
+        <button
+          type="button"
+          onClick={() => switchMode('transfer')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-xs font-medium rounded-xl transition-all duration-300 shrink-0 select-none ${
+            mode === 'transfer'
+              ? 'bg-amber-400/10 text-amber-200 border border-amber-400/20 shadow-[0_0_12px_rgba(251,191,36,0.05)]'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
+          }`}
+        >
+          <ArrowLeftRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+          <span className="truncate text-[11px] sm:text-xs">Transfert P2P</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => switchMode('expense')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-xs font-medium rounded-xl transition-all duration-300 shrink-0 select-none ${
+            mode === 'expense'
+              ? 'bg-amber-400/10 text-amber-200 border border-amber-400/20 shadow-[0_0_12px_rgba(251,191,36,0.05)]'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
+          }`}
+        >
+          <ReceiptText className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+          <span className="truncate text-[11px] sm:text-xs">Dépense</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => switchMode('deposit')}
+          className={`flex-1 flex items-center justify-center gap-2 py-2 px-2 text-xs font-medium rounded-xl transition-all duration-300 shrink-0 select-none ${
+            mode === 'deposit'
+              ? 'bg-amber-400/10 text-amber-200 border border-amber-400/20 shadow-[0_0_12px_rgba(251,191,36,0.05)]'
+              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 border border-transparent'
+          }`}
+        >
+          <CircleDollarSign className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+          <span className="truncate text-[11px] sm:text-xs">Dépôt</span>
+        </button>
       </div>
 
       <div className="mb-6 flex items-start justify-between gap-4">

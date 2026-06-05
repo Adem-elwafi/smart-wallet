@@ -47,13 +47,23 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
     }
   }, [initialTransactions]);
 
-  const getCategoryIcon = (description: string = '') => {
-    const desc = description.toLowerCase();
-    if (desc.includes('monoprix') || desc.includes('alimentation') || desc.includes('courses')) return '🛒';
-    if (desc.includes('netflix') || desc.includes('loisirs') || desc.includes('cinema')) return '🎬';
-    if (desc.includes('uber') || desc.includes('transport') || desc.includes('bus')) return '🚌';
-    if (desc.includes('salaire') || desc.includes('virement')) return '💰';
-    return '💳';
+  const categoryConfig: Record<string, { label: string, icon: string }> = {
+    'ALIMENTATION': { label: 'Alimentation', icon: '🛒' },
+    'TRANSPORT': { label: 'Transport', icon: '🚌' },
+    'LOISIRS': { label: 'Loisirs', icon: '🎬' },
+    'SHOPPING': { label: 'Shopping', icon: '💳' },
+    'REVENUS': { label: 'Revenus', icon: '💰' },
+    'AUTRE': { label: 'Autre', icon: '💳' }
+  };
+
+  const getTransactionDisplay = (tx: TransactionResponse) => {
+    const config = tx.category ? categoryConfig[tx.category] : null;
+    const icon = config?.icon || '💳';
+    const label = (!tx.description || tx.description.trim() === '') && config 
+      ? config.label 
+      : (tx.description || (tx.type === 'CREDIT' ? 'Virement Reçu' : 'Achat'));
+
+    return { label, icon };
   };
 
   if (loading) {
@@ -82,6 +92,7 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
     <div className="flex flex-col gap-4">
       {transactions.map((tx) => {
         const isCredit = currentAccountNumber ? tx.recipientAccountNumber === currentAccountNumber : tx.type === 'CREDIT';
+        const { label, icon } = getTransactionDisplay(tx);
         
         return (
           <div key={tx.id} className="flex items-center justify-between p-3 rounded-xl transition-colors hover:bg-white/[0.03] group">
@@ -89,14 +100,14 @@ const TransactionsList: React.FC<TransactionsListProps> = ({
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-xl ${
                 isCredit ? 'bg-brand-accent/10 text-brand-accent' : 'bg-brand-danger/10 text-brand-danger'
               }`}>
-                {getCategoryIcon(tx.description)}
+                {icon}
               </div>
               <div>
                 <h4 className="text-[15px] font-semibold text-brand-fg">
-                  {isCredit ? 'Virement Reçu' : (tx.description || 'Achat')}
+                  {label}
                 </h4>
                 <p className="text-xs text-brand-muted mt-0.5">
-                  {isCredit ? `De ${tx.senderAccountNumber}` : `À ${tx.recipientAccountNumber}`}
+                  {isCredit ? `De ${tx.senderAccountNumber}` : `À ${tx.recipientAccountNumber || 'Dépense'}`}
                 </p>
               </div>
             </div>
