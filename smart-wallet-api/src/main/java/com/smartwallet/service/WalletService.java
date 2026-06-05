@@ -112,6 +112,7 @@ public class WalletService {
                 .amount(transferRequest.amount())
                 .timestamp(LocalDateTime.now())
                 .type(Transaction.TransactionType.DEBIT)
+                .category(TransactionCategory.AUTRE)
                 .description(transferRequest.description())
                 .senderWallet(senderWallet)
                 .receiverWallet(receiverWallet)
@@ -180,8 +181,8 @@ public class WalletService {
                 .timestamp(LocalDateTime.now())
                 .type(Transaction.TransactionType.CREDIT)
                 .category(TransactionCategory.REVENUS)
-                .description("Dépôt d'argent")
-                .senderWallet(null)
+                .description("Dépôt d'argent (Top-up)")
+                .senderWallet(wallet) // Auto-référence pour éviter NULL
                 .receiverWallet(wallet)
                 .build();
 
