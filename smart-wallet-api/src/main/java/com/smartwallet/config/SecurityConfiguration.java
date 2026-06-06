@@ -36,6 +36,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/v1/auth/**").permitAll() // Routes publiques
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()               // Tout le reste est protégé
                 )
                 .sessionManagement(session -> session
@@ -57,6 +58,7 @@ public class SecurityConfiguration {
 
                 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
                 source.registerCorsConfiguration("/api/**", configuration);
+                source.registerCorsConfiguration("/ws/**", configuration);
                 return source;
         }
 }

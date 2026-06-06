@@ -2,11 +2,12 @@ import axios from 'axios'
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api/axiosConfig'
-import type { Profile, WalletResponse } from '../api/types'
+import type { Profile, Wallet } from '../api/types'
+import { useWebSocket } from '../hooks/useWebSocket'
 
 type AuthContextValue = {
   user: Profile | null
-  wallet: WalletResponse | null
+  wallet: Wallet | null
   isAuthenticated: boolean
   loading: boolean
   loginSuccess: (token: string) => Promise<void>
@@ -19,9 +20,19 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
   const [user, setUser] = useState<Profile | null>(null)
-  const [wallet, setWallet] = useState<WalletResponse | null>(null)
+  const [wallet, setWallet] = useState<Wallet | null>(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
+
+  // Activation du WebSocket en temps réel
+  useWebSocket({
+    enabled: isAuthenticated && !!user,
+    username: user?.username,
+    token: localStorage.getItem('token') || undefined,
+    onWalletUpdate: (newWallet) => {
+      setWallet(newWallet);
+    }
+  });
 
   const clearSession = useCallback(() => {
     setUser(null)
@@ -56,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const [profileResult, walletResult] = await Promise.allSettled([
         api.get<Profile>('/v1/profile/me'),
-        api.get<WalletResponse>('/v1/wallet/me'),
+        api.get<Wallet>('/v1/wallet/me'),
       ])
 
       if (profileResult.status === 'fulfilled') {

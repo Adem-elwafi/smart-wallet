@@ -4,11 +4,13 @@ export interface AuthResponse {
     email?: string;
 }
 
-export interface WalletResponse {
+export interface Wallet {
     accountNumber: string;
     balance: number;
     currency: string;
 }
+
+export type WalletResponse = Wallet;
 
 export interface Transaction {
     id: number;

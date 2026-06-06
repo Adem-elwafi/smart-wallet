@@ -30,6 +30,7 @@ public class WalletService {
     private static final String PREFIX = "SW-";
     private static final SecureRandom random = new SecureRandom();
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public Wallet createWalletForUser(User user) {
         Wallet wallet = Wallet.builder()
@@ -120,6 +121,10 @@ public class WalletService {
 
         Transaction savedTransaction = transactionRepository.save(senderTransaction);
 
+        // Notifier l'expéditeur et le destinataire du nouveau solde via WebSocket
+        notificationService.sendWalletUpdate(senderUsername, new WalletResponse(senderWallet.getAccountNumber(), senderWallet.getBalance(), senderWallet.getCurrency()));
+        notificationService.sendWalletUpdate(receiverWallet.getUser().getUsername(), new WalletResponse(receiverWallet.getAccountNumber(), receiverWallet.getBalance(), receiverWallet.getCurrency()));
+
         return TransactionResponse.fromEntity(savedTransaction);
     }
 
@@ -158,6 +163,9 @@ public class WalletService {
 
         Transaction savedExpense = transactionRepository.save(expenseTransaction);
 
+        // Notifier l'utilisateur de la mise à jour de son solde
+        notificationService.sendWalletUpdate(username, new WalletResponse(wallet.getAccountNumber(), wallet.getBalance(), wallet.getCurrency()));
+
         return TransactionResponse.fromEntity(savedExpense);
     }
 
@@ -187,6 +195,9 @@ public class WalletService {
                 .build();
 
         Transaction savedDeposit = transactionRepository.save(depositTransaction);
+
+        // Notifier l'utilisateur de la mise à jour de son solde
+        notificationService.sendWalletUpdate(username, new WalletResponse(wallet.getAccountNumber(), wallet.getBalance(), wallet.getCurrency()));
 
         return TransactionResponse.fromEntity(savedDeposit);
     }
