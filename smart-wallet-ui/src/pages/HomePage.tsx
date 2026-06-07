@@ -126,7 +126,7 @@ function HomePage() {
               <div className="mt-12 flex flex-wrap items-center gap-6 text-sm text-zinc-500">
                 <div className="flex items-center gap-3 rounded-full border border-white/8 bg-white/5 px-4 py-2 backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-amber-300 shadow-[0_0_16px_rgba(250,204,21,0.8)]" />
-                  Trusted by 50,000+ users
+                  Sécurité Bancaire JWT
                 </div>
                 <div className="flex items-center gap-3 rounded-full border border-white/8 bg-white/5 px-4 py-2 backdrop-blur-md">
                   <span className="h-2 w-2 rounded-full bg-white/60" />
@@ -232,15 +232,14 @@ function HomePage() {
 
                 <div className="absolute bottom-[15%] right-[8%] rounded-[18px] border border-white/8 bg-white/8 px-4 py-3 backdrop-blur-md">
                   <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-amber-300 px-4 py-2 text-lg font-semibold text-zinc-950">1.24M</div>
+                    <div className="rounded-xl bg-amber-300 p-2 text-zinc-950">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                      </svg>
+                    </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">World Active User</p>
-                      <div className="mt-2 flex items-center -space-x-2">
-                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-zinc-300 to-zinc-500" />
-                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-zinc-400 to-zinc-700" />
-                        <span className="h-9 w-9 rounded-full border-2 border-[#0b0a09] bg-linear-to-br from-amber-200 to-amber-500" />
-                        <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#0b0a09] bg-zinc-100 text-sm font-semibold text-zinc-900">+</span>
-                      </div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-zinc-100">Protégé</p>
+                      <p className="mt-0.5 text-[0.62rem] uppercase tracking-[0.15em] text-zinc-500">Chiffrement AES-256</p>
                     </div>
                   </div>
                 </div>
@@ -263,6 +262,45 @@ function HomePage() {
                 <p className="mt-2 text-sm leading-6 text-zinc-500">{description}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        {/* Showcase Section */}
+        <section className="relative overflow-hidden px-4 py-16 md:px-6 md:py-24 border-t border-white/5 bg-black/40">
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,rgba(245,158,11,0.03),transparent_50%)]" />
+          <div className="mx-auto max-w-350 grid gap-12 lg:grid-cols-2 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/10 bg-amber-300/5 px-4 py-1.5 text-xs tracking-[0.2em] text-amber-200 uppercase">
+                Elite Interface
+              </div>
+              <h2 className="text-3xl font-semibold tracking-[-0.04em] text-zinc-50 md:text-5xl">
+                L'expérience de gestion privée, réinventée.
+              </h2>
+              <p className="text-zinc-400 leading-relaxed max-w-lg">
+                Visualisez vos actifs avec une clarté absolue. Notre tableau de bord premium intègre des graphiques dynamiques en temps réel, un suivi des transferts instantané et un chiffrement de qualité militaire, le tout enveloppé dans une interface sombre et ambrée d'exception.
+              </p>
+              <div className="space-y-3 pt-2">
+                {[
+                  "Graphiques prédictifs de croissance d'actifs",
+                  "Filtres de transactions avancés et instantanés",
+                  "Accès sécurisé biométrique et par clés matérielles"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.8)]" />
+                    <span className="text-sm text-zinc-300">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative flex justify-center">
+              {/* Subtle backglow */}
+              <div className="absolute -inset-4 rounded-3xl bg-amber-500/5 blur-2xl transition-all duration-500" />
+              <img
+                src="/fintech_mockup.png"
+                alt="SmartWallet Premium Fintech Dashboard"
+                className="relative rounded-3xl border border-white/10 shadow-[0_0_50px_rgba(245,158,11,0.05)] w-full max-w-xl object-cover hover:border-amber-500/20 transition-all duration-500"
+              />
+            </div>
           </div>
         </section>
 

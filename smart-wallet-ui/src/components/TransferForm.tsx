@@ -247,7 +247,7 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
         <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-zinc-500">Solde dispo.</p>
           <p className="text-sm font-black text-amber-200">
-            {availableBalance.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} TND
+            {availableBalance.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
           </p>
         </div>
       </div>
@@ -330,13 +330,13 @@ function TransferForm({ onTransferSuccess, onError }: TransferFormProps) {
             placeholder="0.00"
             onChange={handleChange}
           />
-          <span className="text-3xl font-bold text-white/40 transition-colors duration-300 group-focus-within:text-amber-300">TND</span>
+          <span className="text-3xl font-bold text-white/40 transition-colors duration-300 group-focus-within:text-amber-300">€</span>
           <div className="pointer-events-none absolute bottom-3 left-1/2 h-0.5 w-24 -translate-x-1/2 rounded-full bg-white/10 transition-all duration-300 group-focus-within:w-32 group-focus-within:bg-amber-300" />
         </div>
 
         <div className="text-xs text-zinc-500">
           {mode === 'transfer'
-            ? `Solde restant estimé après envoi : ${Math.max(remainingBalance, 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} TND`
+            ? `Solde restant estimé après envoi : ${Math.max(remainingBalance, 0).toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €`
             : mode === 'expense'
               ? 'Le montant de la dépense doit rester inférieur au solde disponible.'
               : 'Le dépôt créditera votre carte premium et apparaîtra dans le fil et les graphiques.'}

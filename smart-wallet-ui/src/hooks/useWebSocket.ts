@@ -1,4 +1,5 @@
-import { Client, IFrame } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
+import type { IFrame } from '@stomp/stompjs';
 import { useEffect, useRef } from 'react';
 import SockJS from 'sockjs-client';
 import type { Wallet } from '../api/types';
@@ -31,7 +32,7 @@ export const useWebSocket = ({ enabled, username, token, onWalletUpdate }: UseWe
         Authorization: `Bearer ${token}`,
       },
       debug: (str) => {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
           console.log('STOMP: ' + str);
         }
       },

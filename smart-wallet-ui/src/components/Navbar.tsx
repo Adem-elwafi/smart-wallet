@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext'
 
 function Navbar() {
   const navigate = useNavigate()
-  const { logout, user } = useAuth()
+  const { logout, user, notifications, unreadCount, markAllAsRead, clearNotifications } = useAuth()
+  const [showNotifications, setShowNotifications] = useState(false)
   const [isLightMode, setIsLightMode] = useState(() =>
     typeof document !== 'undefined' && document.documentElement.classList.contains('light-theme'),
   )
@@ -74,10 +75,72 @@ function Navbar() {
             {isLightMode ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
           </button>
 
-          <button className="relative rounded-full border border-white/10 bg-white/5 p-2.5 text-zinc-300 transition-colors hover:bg-white/10 hover:text-amber-200" aria-label="Notifications">
-            <Bell className="h-5 w-5" />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-[#0b0a09] bg-amber-300" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => {
+                setShowNotifications((prev) => !prev)
+                markAllAsRead()
+              }}
+              className="relative rounded-full border border-white/10 bg-white/5 p-2.5 text-zinc-300 transition-colors hover:bg-white/10 hover:text-amber-200"
+              aria-label="Notifications"
+            >
+              <Bell className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full border-2 border-[#0b0a09] bg-amber-400 animate-pulse" />
+              )}
+            </button>
+
+            {showNotifications && (
+              <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-white/10 bg-black/90 p-4 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-200 z-50">
+                <div className="mb-3 flex items-center justify-between border-b border-white/5 pb-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-amber-300">Notifications</span>
+                  {notifications.length > 0 && (
+                    <button
+                      onClick={clearNotifications}
+                      className="text-[10px] font-medium tracking-wide text-zinc-500 hover:text-rose-400 transition-colors"
+                    >
+                      Effacer tout
+                    </button>
+                  )}
+                </div>
+
+                <div className="max-h-64 overflow-y-auto space-y-2.5 pr-0.5">
+                  {notifications.length === 0 ? (
+                    <div className="py-6 text-center text-xs text-zinc-600 font-light select-none">
+                      Aucune notification pour le moment.
+                    </div>
+                  ) : (
+                    notifications.map((notif) => (
+                      <div
+                        key={notif.id}
+                        className={`flex gap-3 rounded-xl p-3 border border-white/5 bg-white/[0.01] transition-all hover:bg-white/[0.04] ${
+                          notif.read ? 'opacity-60' : 'border-amber-500/20 bg-amber-500/[0.02]'
+                        }`}
+                      >
+                        <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                          notif.type === 'success'
+                            ? 'bg-emerald-500/10 text-emerald-400'
+                            : 'bg-amber-500/10 text-amber-400'
+                        }`}>
+                          {notif.type === 'success' ? '⊕' : '⊖'}
+                        </span>
+                        <div className="space-y-0.5 flex-1">
+                          <p className="text-xs font-semibold text-zinc-200 leading-none">{notif.title}</p>
+                          <p className="text-[11px] text-zinc-400 leading-normal mt-1">{notif.message}</p>
+                          <p className="text-[9px] text-zinc-600 font-light mt-1">
+                            {new Date(notif.timestamp).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           <button
             onClick={() => navigate('/profile')}

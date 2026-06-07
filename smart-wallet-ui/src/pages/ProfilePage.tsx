@@ -31,7 +31,7 @@ function FloatingInput({
       {/* Glow ring on focus */}
       <div
         className={`absolute inset-0 rounded-xl transition-opacity duration-300 pointer-events-none
-          bg-linear-to-r from-cyan-500/20 to-indigo-500/20 blur-sm
+          bg-linear-to-r from-amber-500/20 to-amber-600/10 blur-sm
           ${focused ? 'opacity-100' : 'opacity-0'}`}
       />
 
@@ -53,7 +53,7 @@ function FloatingInput({
           text-white placeholder-transparent
           disabled:opacity-40 disabled:cursor-not-allowed
           ${focused
-            ? 'border-cyan-500/60 shadow-[0_0_0_1px_rgba(6,182,212,0.3)]'
+            ? 'border-amber-500/60 shadow-[0_0_0_1px_rgba(245,158,11,0.3)]'
             : 'border-white/10 hover:border-white/20'
           }
         `}
@@ -64,7 +64,7 @@ function FloatingInput({
         className={`
           absolute left-4 pointer-events-none font-light transition-all duration-200 select-none
           ${lifted
-            ? 'top-2 text-[10px] tracking-widest uppercase text-cyan-400'
+            ? 'top-2 text-[10px] tracking-widest uppercase text-amber-400'
             : 'top-4 text-sm text-white/40'
           }
         `}
@@ -92,7 +92,7 @@ function Alert({ type, message }: AlertProps) {
         animate-in fade-in slide-in-from-top-2 duration-300
         ${isError
           ? 'bg-red-500/10 border-red-500/25 text-red-300'
-          : 'bg-emerald-500/10 border-emerald-500/25 text-emerald-300'
+          : 'bg-amber-500/10 border-amber-500/25 text-amber-300'
         }
       `}
     >
@@ -114,17 +114,17 @@ function Avatar({ initials, avatarUrl }: AvatarProps) {
   return (
     <div className="relative flex items-center justify-center">
       {/* Outer pulse ring */}
-      <div className="absolute inset-0 rounded-full bg-cyan-500/20 animate-ping [animation-duration:3s]" />
+      <div className="absolute inset-0 rounded-full bg-amber-500/20 animate-ping [animation-duration:3s]" />
       {/* Glow halo */}
-      <div className="absolute -inset-1 rounded-full bg-linear-to-br from-cyan-500/30 via-indigo-500/20 to-violet-500/30 blur-md" />
+      <div className="absolute -inset-1 rounded-full bg-linear-to-br from-amber-500/30 via-amber-600/10 to-yellow-600/25 blur-md" />
       {/* Ring */}
-      <div className="relative rounded-full ring-4 ring-cyan-500/30 ring-offset-2 ring-offset-[#0a0f1e] overflow-hidden">
+      <div className="relative rounded-full ring-4 ring-amber-500/30 ring-offset-2 ring-offset-[#0b0a09] overflow-hidden">
         {/* Avatar circle */}
         {avatarUrl ? (
           <img src={avatarUrl} alt="Avatar" className="w-24 h-24 rounded-full object-cover" />
         ) : (
-          <div className="w-24 h-24 rounded-full bg-linear-to-br from-cyan-950 to-indigo-950 border border-white/10 flex items-center justify-center">
-            <span className="text-2xl font-extralight tracking-widest text-white/90 select-none">
+          <div className="w-24 h-24 rounded-full bg-linear-to-br from-neutral-900 to-neutral-950 border border-white/10 flex items-center justify-center">
+            <span className="text-2xl font-light tracking-widest text-amber-200 select-none">
               {initials}
             </span>
           </div>
@@ -247,8 +247,8 @@ export default function ProfilePage() {
     return (
       <div className="flex min-h-[80vh] items-center justify-center bg-transparent">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-cyan-500/30 border-t-cyan-500"></div>
-          <span className="text-sm font-light tracking-[0.2em] uppercase text-cyan-500/80">Chargement...</span>
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500/20 border-t-amber-500"></div>
+          <span className="text-sm font-light tracking-[0.2em] uppercase text-amber-500/80">Chargement...</span>
         </div>
       </div>
     )
@@ -256,21 +256,21 @@ export default function ProfilePage() {
 
   return (
     /* ── Full-page wrapper with animated mesh background ── */
-    <div className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center px-4 py-8 bg-transparent rounded-3xl">
+    <div className="relative min-h-[80vh] w-full overflow-hidden flex items-center justify-center px-4 py-8 bg-black rounded-3xl border border-white/5">
 
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-1/4 -left-1/4 w-[60vw] h-[60vw] rounded-full
-          bg-linear-to-br from-indigo-900/50 to-transparent blur-[120px]
+          bg-linear-to-br from-amber-500/5 to-transparent blur-[120px]
           animate-[drift_18s_ease-in-out_infinite_alternate]" />
         <div className="absolute -bottom-1/4 -right-1/4 w-[55vw] h-[55vw] rounded-full
-          bg-linear-to-tl from-cyan-900/40 to-transparent blur-[100px]
+          bg-linear-to-tl from-amber-600/5 to-transparent blur-[100px]
           animate-[drift_22s_ease-in-out_infinite_alternate-reverse]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40vw] h-[40vw] rounded-full
-          bg-linear-to-br from-violet-900/25 to-transparent blur-[140px]
+          bg-linear-to-br from-neutral-900/30 to-transparent blur-[140px]
           animate-[drift_15s_ease-in-out_infinite_alternate]" />
         {/* Grid overlay */}
-        <div className="absolute inset-0 opacity-[0.04]"
+        <div className="absolute inset-0 opacity-[0.02]"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
               linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
@@ -282,9 +282,9 @@ export default function ProfilePage() {
       {/* ── Main card ── */}
       <div className="relative w-full max-w-2xl">
         {/* Card glow */}
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-cyan-500/10 via-indigo-500/5 to-violet-500/10 blur-2xl scale-105" />
+        <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.05),transparent_40%),radial-gradient(circle_at_bottom_right,rgba(245,158,11,0.03),transparent_40%)] blur-xl scale-105" />
 
-        <div className="relative rounded-3xl border border-white/8 bg-white/3 backdrop-blur-2xl overflow-hidden shadow-2xl">
+        <div className="relative rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-md overflow-hidden shadow-[0_24px_80px_-40px_rgba(0,0,0,0.9)]">
 
           {/* Top edge shine */}
           <div className="absolute top-0 inset-x-8 h-px bg-linear-to-r from-transparent via-white/20 to-transparent" />
@@ -292,7 +292,7 @@ export default function ProfilePage() {
           {/* ── Hero header ── */}
           <div className="relative px-8 pt-12 pb-8 flex flex-col items-center text-center overflow-hidden">
             {/* Header background tint */}
-            <div className="absolute inset-0 bg-linear-to-b from-cyan-950/30 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-linear-to-b from-amber-950/10 to-transparent pointer-events-none" />
 
             <div className="relative group cursor-pointer rounded-full">
               <Avatar initials={getInitials()} avatarUrl={formData.avatarUrl} />
@@ -320,13 +320,13 @@ export default function ProfilePage() {
               <h1 className="text-xl font-extralight tracking-[0.15em] text-white/90 uppercase">
                 {formData.fullName || profile?.username || 'Votre Profil'}
               </h1>
-              <p className="mt-1 text-xs tracking-[0.3em] uppercase text-cyan-400/70 font-light">
-                @{profile?.username} · Membre
+              <p className="mt-1 text-xs tracking-[0.3em] uppercase text-amber-400/70 font-light">
+                @{profile?.username} · Membre Elite
               </p>
             </div>
 
             {/* Decorative accent line */}
-            <div className="mt-6 w-16 h-px bg-linear-to-r from-transparent via-cyan-500/50 to-transparent" />
+            <div className="mt-6 w-16 h-px bg-linear-to-r from-transparent via-amber-500/50 to-transparent" />
           </div>
 
           {/* ── Form ── */}
@@ -373,37 +373,26 @@ export default function ProfilePage() {
                 type="submit"
                 disabled={saving}
                 className="
-                  relative w-full group overflow-hidden rounded-xl
-                  px-6 py-4 text-sm font-light tracking-[0.15em] uppercase
-                  text-white
+                  relative w-full overflow-hidden rounded-xl
+                  px-6 py-4 text-sm font-semibold tracking-[0.15em] uppercase
+                  bg-amber-500 text-black hover:bg-amber-400
+                  shadow-[0_0_15px_rgba(245,158,11,0.2)]
                   transition-all duration-200
                   active:scale-[0.97]
                   disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100
                 "
               >
-                {/* Button gradient background */}
-                <span className="absolute inset-0 bg-linear-to-r from-cyan-600 via-indigo-600 to-violet-600
-                  group-hover:from-cyan-500 group-hover:via-indigo-500 group-hover:to-violet-500
-                  transition-all duration-300" />
-
-                {/* Glow shadow */}
-                <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100
-                  shadow-[0_0_30px_rgba(6,182,212,0.35)] transition-opacity duration-300" />
-
                 {/* Shimmer sweep */}
                 <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full
-                  bg-linear-to-r from-transparent via-white/15 to-transparent
+                  bg-linear-to-r from-transparent via-white/20 to-transparent
                   transition-transform duration-700 ease-in-out" />
-
-                {/* Top highlight */}
-                <span className="absolute top-0 inset-x-4 h-px bg-linear-to-r from-transparent via-white/30 to-transparent" />
 
                 {/* Label */}
                 <span className="relative flex items-center justify-center gap-2">
                   {saving ? (
                     <>
                       <svg
-                        className="animate-spin h-3.5 w-3.5 text-white/70"
+                        className="animate-spin h-3.5 w-3.5 text-black/70"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"

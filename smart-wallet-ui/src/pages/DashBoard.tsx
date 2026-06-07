@@ -6,6 +6,7 @@ import {
   History,
   PieChart,
   TrendingDown,
+  Cpu,
   TrendingUp,
   X,
 } from 'lucide-react'
@@ -256,8 +257,10 @@ function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-2xl border border-black/10 bg-black/10 px-4 py-3 lg:justify-end">
-                      <div className="h-12 w-16 rounded-lg border border-white/10 bg-linear-to-br from-zinc-800 to-black shadow-inner" />
+                    <div className="flex items-center justify-center rounded-2xl border border-black/10 bg-black/10 px-4 py-3">
+                      <div className="flex h-12 w-16 items-center justify-center rounded-lg border border-amber-400/20 bg-[linear-gradient(135deg,rgba(255,248,214,0.95),rgba(184,145,65,0.95))] shadow-[inset_0_1px_0_rgba(255,255,255,0.45)]">
+                        <Cpu className="h-6 w-6 text-zinc-950/70" />
+                      </div>
                     </div>
                   </div>
 
@@ -482,7 +485,7 @@ function DashboardPage() {
                 <X className="h-6 w-6 text-zinc-400" />
               </button>
             </div>
-            <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} />
+            <TransactionsList transactions={transactions} currentAccountNumber={wallet?.accountNumber} showControls={true} />
           </div>
         </div>
       )}
